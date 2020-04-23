@@ -14,7 +14,7 @@ namespace S52_HPGL_Editor
     {
         public ViewPort() {
 
-            zoom = 0.5f;
+            projection_scale = 0.5f;
             center = new Point(max_x / 2, max_y / 2);
 
         }
@@ -22,8 +22,8 @@ namespace S52_HPGL_Editor
 
         public void pan(int dx, int dy)
         {
-            center.X += (int) (dx/zoom );
-            center.Y += (int)(dy/zoom );
+            center.X += (int) (dx/projection_scale );
+            center.Y += (int)(dy/projection_scale );
         }
 
 
@@ -33,8 +33,8 @@ namespace S52_HPGL_Editor
             int y = p.Y;
             x = x - width/2;
             y = y - height/2;
-            x = (int) (x/zoom);
-            y = (int)(y / zoom);
+            x = (int) (x/projection_scale);
+            y = (int)(y / projection_scale);
             x += center.X;
             y += center.Y;
             return new Point(x, y);
@@ -44,8 +44,8 @@ namespace S52_HPGL_Editor
 
 
             Point ret = new Point();
-            ret.X = (int)(width/2 + (p.X - center.X) * zoom);
-            ret.Y = (int)(height/2 - (center.Y - p.Y) * zoom);
+            ret.X = (int)(width/2 + (p.X - center.X) * projection_scale);
+            ret.Y = (int)(height/2 - (center.Y - p.Y) * projection_scale);
 
             return ret;
 
@@ -60,7 +60,7 @@ namespace S52_HPGL_Editor
         }
 
         public Point center;
-        public float zoom;
+        public float projection_scale;
         const int max_x = 32767, max_y = 32767;
         int width, height;
         

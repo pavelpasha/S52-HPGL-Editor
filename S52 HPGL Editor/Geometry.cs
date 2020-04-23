@@ -26,11 +26,9 @@ namespace S52_HPGL_Editor
         public List<Point> points = new List<Point>();
         public Transform transform = null;
        
-        
 
         public HGeometry Copy()
         {
-
 
             if (type != GeometryType.CIRCLE)
             {

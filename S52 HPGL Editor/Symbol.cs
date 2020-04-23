@@ -31,6 +31,9 @@ namespace S52_HPGL_Editor
             int point_r = 5; // Point radius
             Point p = new Point();
             int n_points = 0;
+
+            float line_width_k = (100 / (canvas.DpiX / 25.4f))*vp.projection_scale; // Line width coefficient. (S52 docs says :"The coordinates are within the range of 0 to 32767 units. Each unit represents 0.01 mm")
+
             foreach (var geom in geometry)
             {
 
@@ -39,7 +42,7 @@ namespace S52_HPGL_Editor
                 transparency = Math.Max(0, transparency);
 
                 var color = Color.FromArgb(transparency, Style.S52colors[geom.color]);
-                Pen pen = new Pen(color, geom.penWidth * (30 * vp.zoom));
+                Pen pen = new Pen(color, geom.penWidth * line_width_k);
 
 
 
@@ -68,7 +71,7 @@ namespace S52_HPGL_Editor
                     case GeometryType.CIRCLE:
                         var circle = geom as HCircle;
                         p = vp.project(circle.points[0]);
-                        var radius = circle.radius * vp.zoom;
+                        var radius = circle.radius * vp.projection_scale;
                         if (circle.filled)
                             canvas.FillEllipse(new SolidBrush(color), p.X - radius, p.Y - radius, radius * 2, radius * 2);
                         else
@@ -79,7 +82,7 @@ namespace S52_HPGL_Editor
                     case GeometryType.POINT:
 
                         p = vp.project(geom.points[0]);
-                        int size = (int)(geom.penWidth * (30 * vp.zoom));
+                        int size = (int)(geom.penWidth * line_width_k);
                         canvas.FillRectangle(new SolidBrush(color), p.X - size / 2, p.Y - size / 2, size, size);
 
                         break;
@@ -143,7 +146,7 @@ namespace S52_HPGL_Editor
                     case GeometryType.CIRCLE:
                         var circle = geom as HCircle;
                         p = vp.project(circle.points[0]);
-                        var radius = circle.radius * vp.zoom;
+                        var radius = circle.radius * vp.projection_scale;
 
                         canvas.DrawEllipse(new Pen(Color.Red), p.X - radius, p.Y - radius, radius * 2, radius * 2);
                         canvas.DrawEllipse(new Pen(Color.Red), p.X - point_r, p.Y - point_r, point_r * 2, point_r * 2);

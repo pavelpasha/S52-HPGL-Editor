@@ -121,9 +121,6 @@ namespace S52_HPGL_Editor
         }
 
        
-
-
-
         private void canvas_SizeChanged(object sender, EventArgs e)
         {
             vp.resize(canvas.Width, canvas.Height);
@@ -136,7 +133,7 @@ namespace S52_HPGL_Editor
             var g = e.Graphics;
 
             var leftTop = vp.project(new Point(0, 0));
-            var rect_size = 32767 * vp.zoom;
+            var rect_size = 32767 * vp.projection_scale;
 
             g.DrawRectangle(new Pen(Color.Black), leftTop.X, leftTop.Y, rect_size, rect_size);
 
@@ -363,7 +360,7 @@ namespace S52_HPGL_Editor
 
             if (e.Delta > 0)
             {
-                vp.zoom *= k;
+                vp.projection_scale *= k;
                 // Lest zoom to cursor
                 var r = vp.project(zoom_mouse_proj);
 
@@ -373,13 +370,13 @@ namespace S52_HPGL_Editor
             }
             else
             {
-                vp.zoom /= k;
+                vp.projection_scale /= k;
             }
  
             canvas.Refresh();
 
         }
-
+        //
      
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -390,11 +387,11 @@ namespace S52_HPGL_Editor
             {
 
                 case Keys.Oemplus:
-                    vp.zoom *= 2;
+                    vp.projection_scale *= 2;
                     Refresh();
                     break;
                 case Keys.OemMinus:
-                    vp.zoom /= 2;
+                    vp.projection_scale /= 2;
                     Refresh();
                     break;
                 case Keys.Delete: // Delete slected point 
@@ -528,7 +525,7 @@ namespace S52_HPGL_Editor
         }
 
 
-        private void updateExplorerList()
+       private void updateExplorerList()
         {
 
 
@@ -694,13 +691,15 @@ namespace S52_HPGL_Editor
           
             canvas.Refresh();
         }
-
+        // Copy geometry
         private void copy_itm_btn_Click(object sender, EventArgs e)
         {
             current_sym.geometry.Add(current_sym.geometry[geom_explorer.SelectedIndex].Copy());
             updateExplorerList();
+            geom_explorer.SelectedIndex = current_sym.geometry.Count() - 1;
+            selectGeometry(current_sym.geometry.Count() - 1);
             canvas.Refresh();
-            copy_itm_btn.Enabled = false;
+            
         }
 
         private void rotate_val_ValueChanged(object sender, EventArgs e)
@@ -714,7 +713,7 @@ namespace S52_HPGL_Editor
                 canvas.Refresh();
             }
         }
-
+        // Scale changed
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             if (selected_geometry_idx != -1)
@@ -807,7 +806,7 @@ namespace S52_HPGL_Editor
                   
                         sym_expo_textbox.Text = current_sym.expo;
 
-
+                        vp.projection_scale = 1;
                         this.Refresh();
                         this.Focus();
                     }
