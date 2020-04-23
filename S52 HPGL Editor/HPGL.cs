@@ -49,9 +49,7 @@ namespace S52_HPGL_Editor
                 else if (line.StartsWith(def_name))
                 {
 
-
                     var SYMD = line.Substring(9);
-
 
                     var name = SYMD.Substring(0, 8);
                     var type = SYMD.Substring(8, 1);
