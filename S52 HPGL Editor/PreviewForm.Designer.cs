@@ -34,6 +34,7 @@
             this.scale_numeric = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.bg_color = new System.Windows.Forms.ComboBox();
+            this.poly_outline_ckeckbox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.scale_numeric)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,7 +53,7 @@
             // antialiasing_checkbox
             // 
             this.antialiasing_checkbox.AutoSize = true;
-            this.antialiasing_checkbox.Location = new System.Drawing.Point(95, 13);
+            this.antialiasing_checkbox.Location = new System.Drawing.Point(94, 13);
             this.antialiasing_checkbox.Name = "antialiasing_checkbox";
             this.antialiasing_checkbox.Size = new System.Drawing.Size(79, 17);
             this.antialiasing_checkbox.TabIndex = 1;
@@ -95,7 +96,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(180, 14);
+            this.label2.Location = new System.Drawing.Point(257, 14);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(91, 13);
             this.label2.TabIndex = 2;
@@ -105,18 +106,30 @@
             // 
             this.bg_color.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.bg_color.FormattingEnabled = true;
-            this.bg_color.Location = new System.Drawing.Point(278, 9);
+            this.bg_color.Location = new System.Drawing.Point(355, 9);
             this.bg_color.Name = "bg_color";
             this.bg_color.Size = new System.Drawing.Size(65, 21);
             this.bg_color.TabIndex = 4;
             this.bg_color.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.bg_color_DrawItem);
             this.bg_color.SelectedIndexChanged += new System.EventHandler(this.bg_color_SelectedIndexChanged);
             // 
+            // poly_outline_ckeckbox
+            // 
+            this.poly_outline_ckeckbox.AutoSize = true;
+            this.poly_outline_ckeckbox.Location = new System.Drawing.Point(175, 13);
+            this.poly_outline_ckeckbox.Name = "poly_outline_ckeckbox";
+            this.poly_outline_ckeckbox.Size = new System.Drawing.Size(80, 17);
+            this.poly_outline_ckeckbox.TabIndex = 5;
+            this.poly_outline_ckeckbox.Text = "Poly outline";
+            this.poly_outline_ckeckbox.UseVisualStyleBackColor = true;
+            this.poly_outline_ckeckbox.CheckedChanged += new System.EventHandler(this.poly_outline_ckeckbox_CheckedChanged);
+            // 
             // PreviewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(428, 412);
+            this.Controls.Add(this.poly_outline_ckeckbox);
             this.Controls.Add(this.bg_color);
             this.Controls.Add(this.scale_numeric);
             this.Controls.Add(this.label2);
@@ -139,5 +152,6 @@
         private System.Windows.Forms.NumericUpDown scale_numeric;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox bg_color;
+        private System.Windows.Forms.CheckBox poly_outline_ckeckbox;
     }
 }

@@ -132,12 +132,14 @@ namespace S52_HPGL_Editor
 
             var g = e.Graphics;
 
+            // Draw working area bounding box
             var leftTop = vp.project(new Point(0, 0));
             var rect_size = 32767 * vp.projection_scale;
-
             g.DrawRectangle(new Pen(Color.Black), leftTop.X, leftTop.Y, rect_size, rect_size);
 
-            current_sym.paint(ref g, ref vp);
+            // Draw symbol itself
+            
+            current_sym.paint(ref g, ref vp, polygonOutlineToolStripMenuItem.Checked);
 
 
             if (_edit_mode == Edit_mode.EDIT_SYMBOL)
@@ -1072,6 +1074,12 @@ namespace S52_HPGL_Editor
         {
             PreviewForm prf = new PreviewForm(ref current_sym);
             prf.Show();
+        }
+
+        private void polygonOutlineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            polygonOutlineToolStripMenuItem.Checked = !polygonOutlineToolStripMenuItem.Checked;
+            canvas.Refresh();
         }
 
         public Color createContrastColor(Color bg)

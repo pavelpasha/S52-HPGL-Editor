@@ -146,6 +146,10 @@ namespace S52_HPGL_Editor
 
                         g.FillPolygon(new SolidBrush(color), projPnts);
 
+                        if (poly_outline_ckeckbox.Checked)
+                            g.DrawPolygon(pen, projPnts);
+
+
                         break;
                 }
 
@@ -188,6 +192,11 @@ namespace S52_HPGL_Editor
         }
 
         private void canvas_SizeChanged(object sender, EventArgs e)
+        {
+            canvas.Refresh();
+        }
+
+        private void poly_outline_ckeckbox_CheckedChanged(object sender, EventArgs e)
         {
             canvas.Refresh();
         }

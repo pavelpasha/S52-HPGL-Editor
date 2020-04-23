@@ -75,6 +75,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.previewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.polygonOutlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.width_prop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.transp_prop)).BeginInit();
@@ -594,7 +595,8 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.previewToolStripMenuItem});
+            this.previewToolStripMenuItem,
+            this.polygonOutlineToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -605,6 +607,15 @@
             this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.previewToolStripMenuItem.Text = "Preview";
             this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
+            // 
+            // polygonOutlineToolStripMenuItem
+            // 
+            this.polygonOutlineToolStripMenuItem.Checked = true;
+            this.polygonOutlineToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.polygonOutlineToolStripMenuItem.Name = "polygonOutlineToolStripMenuItem";
+            this.polygonOutlineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.polygonOutlineToolStripMenuItem.Text = "Polygon outline";
+            this.polygonOutlineToolStripMenuItem.Click += new System.EventHandler(this.polygonOutlineToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -709,6 +720,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem previewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem polygonOutlineToolStripMenuItem;
     }
 }
 

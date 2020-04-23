@@ -25,7 +25,7 @@ namespace S52_HPGL_Editor
 
 
 
-        public void paint(ref System.Drawing.Graphics canvas, ref ViewPort vp)
+        public void paint(ref System.Drawing.Graphics canvas, ref ViewPort vp, bool polygonOutline = false)
         {
 
             int point_r = 5; // Point radius
@@ -103,6 +103,8 @@ namespace S52_HPGL_Editor
                         }
 
                         canvas.FillPolygon(new SolidBrush(color), projPnts);
+                        if (polygonOutline)
+                            canvas.DrawPolygon(pen, projPnts);
 
                         break;
                 }
