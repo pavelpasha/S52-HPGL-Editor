@@ -85,8 +85,7 @@ namespace S52_HPGL_Editor
             vp = new ViewPort();
             current_sym = new Symbol();
             vp.resize(canvas.Width, canvas.Height);
-            //open_file_btn.Visible = false;
-            //canvas.Focus();
+      
             canvas.MouseWheel += new MouseEventHandler(Panel1_MouseWheel);
             Style.init();
             status_string.Anchor = (AnchorStyles.Bottom | AnchorStyles.Left);
@@ -109,7 +108,7 @@ namespace S52_HPGL_Editor
 
             
             collectionRoundMenuStrip = new ContextMenuStrip();
-       
+                   
 
         }
 
@@ -191,9 +190,7 @@ namespace S52_HPGL_Editor
         private void canvas_MouseDown(object sender, MouseEventArgs e)
         {
 
-            canvas.Focus();
-            canvas.Select();
-
+            
             _mouse_startX = e.X;
             _mouse_startY = e.Y;
 
@@ -424,6 +421,7 @@ namespace S52_HPGL_Editor
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (sym_expo_textbox.Focused) return;
             e.Handled = true;
             switch (e.KeyCode)
             {
@@ -561,8 +559,7 @@ namespace S52_HPGL_Editor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.BringToFront();
-            this.Focus();
+     
             this.KeyPreview = true;
 
         }

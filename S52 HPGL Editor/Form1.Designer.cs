@@ -568,10 +568,12 @@
             // 
             // sym_expo_textbox
             // 
+            this.sym_expo_textbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.sym_expo_textbox.Location = new System.Drawing.Point(398, 1);
-            this.sym_expo_textbox.MaxLength = 50;
+            this.sym_expo_textbox.MaxLength = 150;
             this.sym_expo_textbox.Name = "sym_expo_textbox";
-            this.sym_expo_textbox.Size = new System.Drawing.Size(350, 20);
+            this.sym_expo_textbox.Size = new System.Drawing.Size(365, 20);
             this.sym_expo_textbox.TabIndex = 15;
             this.sym_expo_textbox.TextChanged += new System.EventHandler(this.sym_expo_textbox_TextChanged);
             // 
