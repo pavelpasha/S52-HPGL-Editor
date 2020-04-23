@@ -1068,6 +1068,11 @@ namespace S52_HPGL_Editor
 
         }
 
+        private void previewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PreviewForm prf = new PreviewForm(ref current_sym);
+            prf.Show();
+        }
 
         public Color createContrastColor(Color bg)
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace S52_HPGL_Editor
 {
-    class Transform
+    public class Transform
     {
 
         public int rotate_angle = 0;

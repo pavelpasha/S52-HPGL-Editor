@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace S52_HPGL_Editor
 {
-    class Symbol
+    public class Symbol
     {
 
         public string instruction = "";

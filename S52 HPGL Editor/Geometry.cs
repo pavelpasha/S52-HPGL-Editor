@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace S52_HPGL_Editor
 {
 
-    enum GeometryType
+    public enum GeometryType
     {
         LINE,
         CIRCLE,
@@ -16,7 +16,7 @@ namespace S52_HPGL_Editor
         POINT,
         NONE
     }
-    class HGeometry
+    public class HGeometry
     {
         public GeometryType type;
         public string color = "CHBLK"; // default color

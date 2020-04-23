@@ -10,7 +10,7 @@ namespace S52_HPGL_Editor
 {
 
 
-    class ViewPort
+    public class ViewPort
     {
         public ViewPort() {
 

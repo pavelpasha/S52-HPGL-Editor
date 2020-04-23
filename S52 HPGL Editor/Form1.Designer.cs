@@ -73,6 +73,8 @@
             this.label9 = new System.Windows.Forms.Label();
             this.sym_expo_textbox = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.previewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.width_prop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.transp_prop)).BeginInit();
@@ -115,6 +117,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.addToolStripMenuItem,
+            this.viewToolStripMenuItem,
             this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -550,7 +553,7 @@
             // 
             // sym_name_textbox
             // 
-            this.sym_name_textbox.Location = new System.Drawing.Point(263, 2);
+            this.sym_name_textbox.Location = new System.Drawing.Point(329, 2);
             this.sym_name_textbox.MaxLength = 8;
             this.sym_name_textbox.Name = "sym_name_textbox";
             this.sym_name_textbox.Size = new System.Drawing.Size(79, 20);
@@ -561,7 +564,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.BackColor = System.Drawing.SystemColors.Menu;
-            this.label9.Location = new System.Drawing.Point(219, 6);
+            this.label9.Location = new System.Drawing.Point(285, 6);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(38, 13);
             this.label9.TabIndex = 16;
@@ -571,10 +574,10 @@
             // 
             this.sym_expo_textbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sym_expo_textbox.Location = new System.Drawing.Point(398, 2);
+            this.sym_expo_textbox.Location = new System.Drawing.Point(465, 2);
             this.sym_expo_textbox.MaxLength = 150;
             this.sym_expo_textbox.Name = "sym_expo_textbox";
-            this.sym_expo_textbox.Size = new System.Drawing.Size(353, 20);
+            this.sym_expo_textbox.Size = new System.Drawing.Size(286, 20);
             this.sym_expo_textbox.TabIndex = 15;
             this.sym_expo_textbox.TextChanged += new System.EventHandler(this.sym_expo_textbox_TextChanged);
             // 
@@ -582,11 +585,26 @@
             // 
             this.label10.AutoSize = true;
             this.label10.BackColor = System.Drawing.SystemColors.Control;
-            this.label10.Location = new System.Drawing.Point(354, 6);
+            this.label10.Location = new System.Drawing.Point(420, 6);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(34, 13);
             this.label10.TabIndex = 16;
             this.label10.Text = "Expo:";
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.previewToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // previewToolStripMenuItem
+            // 
+            this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
+            this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.previewToolStripMenuItem.Text = "Preview";
+            this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -689,6 +707,8 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox sym_expo_textbox;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem previewToolStripMenuItem;
     }
 }
 
