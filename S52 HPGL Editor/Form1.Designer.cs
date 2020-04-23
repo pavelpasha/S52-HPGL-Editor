@@ -63,7 +63,7 @@
             this.rot_origin_x = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.current_point_label = new System.Windows.Forms.Label();
             this.point_x_val = new System.Windows.Forms.NumericUpDown();
             this.point_y_val = new System.Windows.Forms.NumericUpDown();
             this.circle_filled_prop = new System.Windows.Forms.CheckBox();
@@ -473,15 +473,15 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Rotate:";
             // 
-            // label7
+            // current_point_label
             // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(159, 497);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(78, 13);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Selected point:";
+            this.current_point_label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.current_point_label.AutoSize = true;
+            this.current_point_label.Location = new System.Drawing.Point(159, 497);
+            this.current_point_label.Name = "current_point_label";
+            this.current_point_label.Size = new System.Drawing.Size(78, 13);
+            this.current_point_label.TabIndex = 11;
+            this.current_point_label.Text = "Selected point:";
             // 
             // point_x_val
             // 
@@ -560,6 +560,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
+            this.label9.BackColor = System.Drawing.SystemColors.Menu;
             this.label9.Location = new System.Drawing.Point(219, 6);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(38, 13);
@@ -570,17 +571,18 @@
             // 
             this.sym_expo_textbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sym_expo_textbox.Location = new System.Drawing.Point(398, 1);
+            this.sym_expo_textbox.Location = new System.Drawing.Point(398, 2);
             this.sym_expo_textbox.MaxLength = 150;
             this.sym_expo_textbox.Name = "sym_expo_textbox";
-            this.sym_expo_textbox.Size = new System.Drawing.Size(365, 20);
+            this.sym_expo_textbox.Size = new System.Drawing.Size(353, 20);
             this.sym_expo_textbox.TabIndex = 15;
             this.sym_expo_textbox.TextChanged += new System.EventHandler(this.sym_expo_textbox_TextChanged);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(354, 5);
+            this.label10.BackColor = System.Drawing.SystemColors.Control;
+            this.label10.Location = new System.Drawing.Point(354, 6);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(34, 13);
             this.label10.TabIndex = 16;
@@ -602,7 +604,7 @@
             this.Controls.Add(this.circle_filled_prop);
             this.Controls.Add(this.point_y_val);
             this.Controls.Add(this.point_x_val);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.current_point_label);
             this.Controls.Add(this.copy_itm_btn);
             this.Controls.Add(this.delete_itm_btn);
             this.Controls.Add(this.geom_explorer);
@@ -663,7 +665,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown rotate_value;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label current_point_label;
         private System.Windows.Forms.NumericUpDown point_x_val;
         private System.Windows.Forms.NumericUpDown point_y_val;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;

@@ -48,6 +48,7 @@ namespace S52_HPGL_Editor
 
             // Set things to default
             ed_sym_mode.Checked = false;
+            current_point_label.Text = "Selected point:";
 
             _edit_mode = mode;
             if (mode == Edit_mode.ADD_GEOM || mode == Edit_mode.ADD_POINT)
@@ -66,6 +67,14 @@ namespace S52_HPGL_Editor
                 current_sym.unselectAll();
                 selected_geometry_idx = -1;
                 selected_point_idx = -1;
+
+                point_x_val.Enabled = true;
+                point_y_val.Enabled = true;
+
+                point_x_val.Value = current_sym.pivot_x;
+                point_y_val.Value = current_sym.pivot_y;
+
+                current_point_label.Text = "Pivot point:";
             }
 
 
@@ -286,29 +295,6 @@ namespace S52_HPGL_Editor
                         }
 
                     }
-
-                    if (_edit_mode == Edit_mode.EDIT_SYMBOL)
-                    {
-
-                        var p = vp.project(new Point(current_sym.pivot_x, current_sym.pivot_y));
-
-                        if (Math.Abs(p.X - e.X) < 6 && Math.Abs(p.Y - e.Y) < 6)
-                        {
-                            selected_point_idx = 0; // Select pivot point of whole symbol
-
-                            point_x_val.Enabled = true;
-                            point_y_val.Enabled = true;
-
-                            point_x_val.Value = current_sym.pivot_x;
-                            point_y_val.Value = current_sym.pivot_y;
-
-                            canvas.Refresh();
-                        }
-
-
-                    }
-
-
 
                 }
 
@@ -868,8 +854,7 @@ namespace S52_HPGL_Editor
 
                         updateExplorerList();
 
-                        _edit_mode = Edit_mode.EDIT_SYMBOL;
-
+                        setEditiMode(Edit_mode.EDIT_SYMBOL); 
 
                         sym_name_textbox.Text = current_sym.name;
                   
