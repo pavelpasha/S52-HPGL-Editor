@@ -208,6 +208,43 @@ namespace S52_HPGL_Editor
 
         }
 
+        // Update symbol boundingBox (offset_x,y; width, height)
+        private void updateSizes()
+        {
+
+            int maxX = -1;
+            int maxY = -1;
+            int minX = 32767;
+            int minY = 32767;
+
+            foreach (var g in geometry) {
+
+                foreach (var p in g.points)
+                {
+
+                    if (p.X > maxX)
+                        maxX = p.X;
+                    if (p.Y > maxY)
+                        maxY = p.Y;
+
+                    if (p.X < minX)
+                        minX = p.X;
+                    if (p.Y < minY)
+                        minY = p.Y;
+
+                }
+
+            }
+
+
+            offset_x = minX;
+            offset_y = minY;
+            width = maxX - minX;
+            height = maxY - minY;
+
+        }
+
+
         private static char getRandomChar()
         {
 
@@ -248,10 +285,11 @@ namespace S52_HPGL_Editor
         public  string serialize()
         {
 
+            updateSizes();
+
             string colref_str = "";
             string definition = "SYMD";
             
-
             if (type == 'L')          
                 definition = "LIND";
                       

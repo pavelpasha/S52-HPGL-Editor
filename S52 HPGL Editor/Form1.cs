@@ -29,6 +29,7 @@ namespace S52_HPGL_Editor
         bool _fired_by_user = false; // If value changed by user
 
         GeometryType _addMode = GeometryType.NONE;
+        Edit_mode _edit_mode = Edit_mode.EDIT_GEOMETRY;
 
         int selected_geometry_idx = -1; // index of geometry wich is under editing
         int selected_point_idx = -1;
@@ -37,18 +38,16 @@ namespace S52_HPGL_Editor
             ADD_GEOM,
             ADD_POINT,
             EDIT_SYMBOL,
-            EDIT_GEOMETRY
-            
+            EDIT_GEOMETRY      
         }
 
-        Edit_mode _edit_mode = Edit_mode.EDIT_GEOMETRY;
-
-
+        
         private void setEditiMode(Edit_mode mode) {
 
             // Set things to default
             ed_sym_mode.Checked = false;
             current_point_label.Text = "Selected point:";
+            //
 
             _edit_mode = mode;
             if (mode == Edit_mode.ADD_GEOM || mode == Edit_mode.ADD_POINT)
@@ -157,12 +156,6 @@ namespace S52_HPGL_Editor
                 g.DrawLine(new Pen(Color.Yellow), origin.X, origin.Y - 5, origin.X, origin.Y + 5);
                 g.DrawLine(new Pen(Color.Yellow), origin.X - 5, origin.Y, origin.X + 5, origin.Y);
 
-                if (selected_point_idx == 0) // Selected pivot point
-                {
-
-                    g.DrawRectangle(new Pen(Color.Red), origin.X - 5, origin.Y - 5, 10, 10);
-
-                }
             }
             // If geometry selected -  its points and rotate origin
             else
@@ -208,37 +201,30 @@ namespace S52_HPGL_Editor
             {
 
 
-                if (_edit_mode == Edit_mode.ADD_GEOM)
+                if (_edit_mode == Edit_mode.ADD_GEOM) //Add new geometry of chosen type in selected point
                 {
 
                     HGeometry new_geometry = null;
 
                     if (_addMode == GeometryType.CIRCLE)
-                    {
-                       
+                    {                   
                         new_geometry = new HCircle();
-
                         setEditiMode(Edit_mode.EDIT_GEOMETRY);
                     }
                     else if (_addMode == GeometryType.POINT)
                     {
-
                         new_geometry = new HPoint();
                         setEditiMode(Edit_mode.EDIT_GEOMETRY);
                         
                     }
                     else if (_addMode == GeometryType.LINE)
                     {
-
                         new_geometry = new HLineString();
-
                         setEditiMode(Edit_mode.ADD_POINT);
                     }
                     else if (_addMode == GeometryType.POLYGON)
                     {
-
                         new_geometry = new HPolygon();
-
                         setEditiMode(Edit_mode.ADD_POINT);
                     }
                     var p = vp.unproject(new Point(e.X, e.Y));
@@ -249,7 +235,7 @@ namespace S52_HPGL_Editor
                     selectGeometry(current_sym.geometry.Count() - 1);
                     canvas.Refresh();
                 }
-                else if (_edit_mode == Edit_mode.ADD_POINT)
+                else if (_edit_mode == Edit_mode.ADD_POINT) // Append point to selected geometry
                 {
 
                     current_sym.geometry[selected_geometry_idx].points.Add(vp.unproject(new Point(e.X, e.Y)));
@@ -344,16 +330,7 @@ namespace S52_HPGL_Editor
                 }
 
             }
-            if (_edit_mode == Edit_mode.EDIT_SYMBOL) {
-
-                var p = vp.project(new Point (current_sym.pivot_x, current_sym.pivot_y));
-
-                if (Math.Abs(p.X - e.X) < 6 && Math.Abs(p.Y - e.Y) < 6)
-                    this.Cursor = Cursors.SizeAll;
-                
-                }
-
-
+   
             if (e.Button == MouseButtons.Middle)
             {
 
@@ -784,37 +761,7 @@ namespace S52_HPGL_Editor
 
       
 
-        private void lineToolStripMenuItem_Click(object sender, EventArgs e) // Add line menu button click handler
-        {
-            setEditiMode(Edit_mode.ADD_GEOM);
-            _addMode = GeometryType.LINE;
-            
-
-        }
-
-        private void polygonToolStripMenuItem_Click(object sender, EventArgs e) // Add polygon menu button click handler
-        {
-            setEditiMode(Edit_mode.ADD_GEOM);
-            _addMode = GeometryType.POLYGON;
-            
-
-        }
-
-        private void circleToolStripMenuItem_Click(object sender, EventArgs e) // Add circle menu button click handler
-        {
-            setEditiMode(Edit_mode.ADD_GEOM);
-            _addMode = GeometryType.CIRCLE;
-            
-
-        }
-
-        private void pointToolStripMenuItem_Click(object sender, EventArgs e) // Add point menu button click handler
-        {
-            setEditiMode(Edit_mode.ADD_GEOM);
-            _addMode = GeometryType.POINT;
-            
-            
-        }
+        
 
 
         /// Strip menu handlers
@@ -937,6 +884,38 @@ namespace S52_HPGL_Editor
             var str = current_sym.serialize();
             Console.WriteLine(str);
             Clipboard.SetText(str);
+        }
+
+        private void lineToolStripMenuItem_Click(object sender, EventArgs e) // Add line menu button click handler
+        {
+            setEditiMode(Edit_mode.ADD_GEOM);
+            _addMode = GeometryType.LINE;
+
+
+        }
+
+        private void polygonToolStripMenuItem_Click(object sender, EventArgs e) // Add polygon menu button click handler
+        {
+            setEditiMode(Edit_mode.ADD_GEOM);
+            _addMode = GeometryType.POLYGON;
+
+
+        }
+
+        private void circleToolStripMenuItem_Click(object sender, EventArgs e) // Add circle menu button click handler
+        {
+            setEditiMode(Edit_mode.ADD_GEOM);
+            _addMode = GeometryType.CIRCLE;
+
+
+        }
+
+        private void pointToolStripMenuItem_Click(object sender, EventArgs e) // Add point menu button click handler
+        {
+            setEditiMode(Edit_mode.ADD_GEOM);
+            _addMode = GeometryType.POINT;
+
+
         }
 
         /// Geometry transform handlers
