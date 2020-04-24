@@ -22,23 +22,23 @@ namespace S52_HPGL_Editor
     {
 
         ViewPort vp;
-        Symbol current_sym;
+        Symbol symbol;
         private readonly ContextMenuStrip collectionRoundMenuStrip;
 
         int _mouse_startX, _mouse_startY;
         bool _fired_by_user = false; // If value changed by user
 
-        GeometryType _addMode = GeometryType.NONE;
+        GeometryType _addMode = GeometryType.NONE;  // Store geometry type of geometry wich we are going to add
         Edit_mode _edit_mode = Edit_mode.EDIT_GEOMETRY;
 
         int selected_geometry_idx = -1; // index of geometry wich is under editing
         int selected_point_idx = -1;
 
         enum Edit_mode {
-            ADD_GEOM,
-            ADD_POINT,
-            EDIT_SYMBOL,
-            EDIT_GEOMETRY      
+            ADD_GEOM,            // Add new geometry of selected type   
+            ADD_POINT,          // Add new points to selected geom (except circle and point)    
+            EDIT_SYMBOL,       // Edit whole symbol
+            EDIT_GEOMETRY      // Edit whole geometry
         }
 
         
@@ -63,15 +63,15 @@ namespace S52_HPGL_Editor
             if (mode == Edit_mode.EDIT_SYMBOL)
             {
                 ed_sym_mode.Checked = true;
-                current_sym.unselectAll();
+                symbol.unselectAll();
                 selected_geometry_idx = -1;
                 selected_point_idx = -1;
 
                 point_x_val.Enabled = true;
                 point_y_val.Enabled = true;
 
-                point_x_val.Value = current_sym.pivot_x;
-                point_y_val.Value = current_sym.pivot_y;
+                point_x_val.Value = symbol.pivot_x;
+                point_y_val.Value = symbol.pivot_y;
 
                 current_point_label.Text = "Pivot point:";
             }
@@ -82,7 +82,7 @@ namespace S52_HPGL_Editor
         private void moveSelectedPoint(int dx, int dy)
         {
 
-            current_sym.geometry[selected_geometry_idx].movePoint(selected_point_idx, dx, dy);
+            symbol.geometry[selected_geometry_idx].movePoint(selected_point_idx, dx, dy);
            
 
         }
@@ -91,7 +91,7 @@ namespace S52_HPGL_Editor
         {
             InitializeComponent();
             vp = new ViewPort();
-            current_sym = new Symbol();
+            symbol = new Symbol();
             vp.resize(canvas.Width, canvas.Height);
       
             canvas.MouseWheel += new MouseEventHandler(Panel1_MouseWheel);
@@ -139,7 +139,7 @@ namespace S52_HPGL_Editor
 
             // Draw symbol itself
             
-            current_sym.paint(ref g, ref vp, polygonOutlineToolStripMenuItem.Checked);
+            symbol.paint(ref g, ref vp, polygonOutlineToolStripMenuItem.Checked);
 
 
             if (_edit_mode == Edit_mode.EDIT_SYMBOL)
@@ -147,7 +147,7 @@ namespace S52_HPGL_Editor
 
                 // Draw symbol pivot point
 
-                var origin = vp.project(new Point(current_sym.pivot_x, current_sym.pivot_y));
+                var origin = vp.project(new Point(symbol.pivot_x, symbol.pivot_y));
 
                 g.DrawLine(new Pen(Color.Black, 3), origin.X, origin.Y - 5, origin.X, origin.Y + 5);
                 g.DrawLine(new Pen(Color.Black, 3), origin.X - 5, origin.Y, origin.X + 5, origin.Y);
@@ -163,7 +163,7 @@ namespace S52_HPGL_Editor
                 {
                     if (selected_point_idx != -1)
                     {
-                        var p = current_sym.geometry[selected_geometry_idx].points[selected_point_idx];
+                        var p = symbol.geometry[selected_geometry_idx].points[selected_point_idx];
 
                         p = vp.project(p);
 
@@ -228,16 +228,16 @@ namespace S52_HPGL_Editor
                     }
                     var p = vp.unproject(new Point(e.X, e.Y));
                     new_geometry.addPoint(p);
-                    current_sym.geometry.Add(new_geometry);
+                    symbol.geometry.Add(new_geometry);
                     updateExplorerList();
-                    geom_explorer.SelectedIndex = current_sym.geometry.Count() - 1;
-                    selectGeometry(current_sym.geometry.Count() - 1);
+                    geom_explorer.SelectedIndex = symbol.geometry.Count() - 1;
+                    selectGeometry(symbol.geometry.Count() - 1);
                     canvas.Refresh();
                 }
                 else if (_edit_mode == Edit_mode.ADD_POINT) // Append point to selected geometry
                 {
 
-                    current_sym.geometry[selected_geometry_idx].points.Add(vp.unproject(new Point(e.X, e.Y)));
+                    symbol.geometry[selected_geometry_idx].points.Add(vp.unproject(new Point(e.X, e.Y)));
 
                     canvas.Refresh();
                 }
@@ -247,7 +247,7 @@ namespace S52_HPGL_Editor
                     if (selected_geometry_idx != -1)
                     {
 
-                        var s_geom = current_sym.geometry[selected_geometry_idx];
+                        var s_geom = symbol.geometry[selected_geometry_idx];
 
                         for (int i = 0; i < s_geom.points.Count(); i++)
                         {
@@ -262,7 +262,7 @@ namespace S52_HPGL_Editor
                                 {
                                     selected_point_idx = i;
 
-                                    p = current_sym.geometry[selected_geometry_idx].points[selected_point_idx];
+                                    p = symbol.geometry[selected_geometry_idx].points[selected_point_idx];
 
                                     point_x_val.Enabled = true;
                                     point_y_val.Enabled = true;
@@ -291,12 +291,14 @@ namespace S52_HPGL_Editor
             var pos = vp.unproject(new Point(e.X, e.Y));
             status_string.Text = string.Format("X: {0}, Y: {1}", pos.X, pos.Y);
 
+            if (_edit_mode == Edit_mode.ADD_POINT) return;
+
             this.Cursor = Cursors.Default;
 
             if (selected_geometry_idx != -1 && selected_point_idx != -1)
             {
                 
-                var s_geom = current_sym.geometry[selected_geometry_idx];
+                var s_geom = symbol.geometry[selected_geometry_idx];
 
                 for (int i = 0; i < s_geom.points.Count(); i++)
                 {
@@ -399,9 +401,9 @@ namespace S52_HPGL_Editor
                 case Keys.Delete: // Delete slected point 
                     if (selected_geometry_idx != -1 && selected_point_idx != -1)
                     {
-                        if (current_sym.geometry[selected_geometry_idx].points.Count() != 1) // if only one point  - not need to delete it
+                        if (symbol.geometry[selected_geometry_idx].points.Count() != 1) // if only one point  - not need to delete it
                         {
-                            current_sym.geometry[selected_geometry_idx].removePoint(selected_point_idx);
+                            symbol.geometry[selected_geometry_idx].removePoint(selected_point_idx);
 
                             selected_point_idx = -1;
                             Refresh();
@@ -422,7 +424,7 @@ namespace S52_HPGL_Editor
                         else
                         { // else move whole geometry
 
-                            current_sym.geometry[selected_geometry_idx].move(-1, 0);
+                            symbol.geometry[selected_geometry_idx].move(-1, 0);
 
                         }
 
@@ -430,7 +432,7 @@ namespace S52_HPGL_Editor
 
                     if (_edit_mode == Edit_mode.EDIT_SYMBOL)
                     {
-                        current_sym.move(-1, 0);
+                        symbol.move(-1, 0);
                     }
 
                     Refresh();
@@ -446,7 +448,7 @@ namespace S52_HPGL_Editor
                         else
                         { // else move whole geometry
 
-                            current_sym.geometry[selected_geometry_idx].move(1, 0);
+                            symbol.geometry[selected_geometry_idx].move(1, 0);
 
                         }
 
@@ -454,7 +456,7 @@ namespace S52_HPGL_Editor
 
                     if (_edit_mode == Edit_mode.EDIT_SYMBOL)
                     {
-                        current_sym.move(1, 0);
+                        symbol.move(1, 0);
                     }
 
                     Refresh();
@@ -470,7 +472,7 @@ namespace S52_HPGL_Editor
                         else
                         { // else move whole geometry
 
-                            current_sym.geometry[selected_geometry_idx].move(0, -1);
+                            symbol.geometry[selected_geometry_idx].move(0, -1);
 
                         }
 
@@ -478,7 +480,7 @@ namespace S52_HPGL_Editor
 
                     if (_edit_mode == Edit_mode.EDIT_SYMBOL)
                     {
-                        current_sym.move(0, -1);
+                        symbol.move(0, -1);
                     }
 
                     Refresh();
@@ -493,7 +495,7 @@ namespace S52_HPGL_Editor
                         }
                         else { // else move whole geometry
 
-                            current_sym.geometry[selected_geometry_idx].move(0,1);
+                            symbol.geometry[selected_geometry_idx].move(0,1);
 
                         }
 
@@ -502,7 +504,7 @@ namespace S52_HPGL_Editor
                     }
 
                     if (_edit_mode == Edit_mode.EDIT_SYMBOL) {
-                        current_sym.move(0,1);
+                        symbol.move(0,1);
                     }
                     
                     Refresh();
@@ -533,7 +535,7 @@ namespace S52_HPGL_Editor
 
             geom_explorer.Items.Clear();
 
-            foreach (var g in current_sym.geometry)
+            foreach (var g in symbol.geometry)
             {
                 string desctiption = "lineString";
 
@@ -562,7 +564,7 @@ namespace S52_HPGL_Editor
             selected_geometry_idx = idx;
 
             // Set things to default
-            foreach (var g in current_sym.geometry)
+            foreach (var g in symbol.geometry)
                 g.selected = false;       
 
             color_prop_combo.Enabled = false;
@@ -574,7 +576,7 @@ namespace S52_HPGL_Editor
             circle_filled_prop.Enabled = false;
             //
 
-            var s_geom = current_sym.geometry[selected_geometry_idx];
+            var s_geom = symbol.geometry[selected_geometry_idx];
             s_geom.selected = true;
 
             color_prop_combo.Enabled = true;
@@ -583,7 +585,7 @@ namespace S52_HPGL_Editor
             transp_prop.Value = s_geom.transparency;
 
             width_prop.Enabled = true;
-            width_prop.Value = current_sym.geometry[selected_geometry_idx].penWidth;
+            width_prop.Value = symbol.geometry[selected_geometry_idx].penWidth;
           
             if (s_geom.type == GeometryType.CIRCLE)
             {
@@ -596,7 +598,7 @@ namespace S52_HPGL_Editor
                 if (!ci.filled)
                 {
                     width_prop.Enabled = true;
-                    width_prop.Value = current_sym.geometry[selected_geometry_idx].penWidth;
+                    width_prop.Value = symbol.geometry[selected_geometry_idx].penWidth;
                     
                 }
 
@@ -634,7 +636,7 @@ namespace S52_HPGL_Editor
         {
             if (selected_geometry_idx != -1)
             {
-                current_sym.geometry[selected_geometry_idx].color = color_prop_combo.Text;
+                symbol.geometry[selected_geometry_idx].color = color_prop_combo.Text;
                 canvas.Refresh();
             }
 
@@ -642,13 +644,13 @@ namespace S52_HPGL_Editor
 
         private void width_prop_ValueChanged(object sender, EventArgs e)
         {
-            current_sym.geometry[selected_geometry_idx].penWidth = (int)width_prop.Value;
+            symbol.geometry[selected_geometry_idx].penWidth = (int)width_prop.Value;
             canvas.Refresh();
         }
 
         private void transp_prop_ValueChanged(object sender, EventArgs e)
         {
-            current_sym.geometry[selected_geometry_idx].transparency = (int)transp_prop.Value;
+            symbol.geometry[selected_geometry_idx].transparency = (int)transp_prop.Value;
             canvas.Refresh();
         }
 
@@ -662,20 +664,20 @@ namespace S52_HPGL_Editor
         private void radius_prop_ValueChanged(object sender, EventArgs e)
         {
 
-            (current_sym.geometry[selected_geometry_idx] as HCircle).radius = (int)radius_prop.Value;
+            (symbol.geometry[selected_geometry_idx] as HCircle).radius = (int)radius_prop.Value;
             canvas.Refresh();
         }
 
         private void circle_filled_prop_CheckedChanged(object sender, EventArgs e)
         {
-            (current_sym.geometry[selected_geometry_idx] as HCircle).filled = circle_filled_prop.Checked;
+            (symbol.geometry[selected_geometry_idx] as HCircle).filled = circle_filled_prop.Checked;
             canvas.Refresh();
         }
 
         private void delete_itm_btn_Click(object sender, EventArgs e)
         {
 
-            current_sym.geometry.RemoveAt(geom_explorer.SelectedIndex);
+            symbol.geometry.RemoveAt(geom_explorer.SelectedIndex);
             selected_geometry_idx = -1;
             updateExplorerList();
             delete_itm_btn.Enabled = false;
@@ -686,10 +688,10 @@ namespace S52_HPGL_Editor
         // Copy geometry
         private void copy_itm_btn_Click(object sender, EventArgs e)
         {
-            current_sym.geometry.Add(current_sym.geometry[geom_explorer.SelectedIndex].Copy());
+            symbol.geometry.Add(symbol.geometry[geom_explorer.SelectedIndex].Copy());
             updateExplorerList();
-            geom_explorer.SelectedIndex = current_sym.geometry.Count() - 1;
-            selectGeometry(current_sym.geometry.Count() - 1);
+            geom_explorer.SelectedIndex = symbol.geometry.Count() - 1;
+            selectGeometry(symbol.geometry.Count() - 1);
             canvas.Refresh();
             
         }
@@ -700,7 +702,7 @@ namespace S52_HPGL_Editor
             {
 
 
-                current_sym.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
+                symbol.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
 
                 canvas.Refresh();
             }
@@ -712,14 +714,14 @@ namespace S52_HPGL_Editor
             if (_edit_mode == Edit_mode.EDIT_SYMBOL)
             {
 
-                current_sym.pivot_x = (int)point_x_val.Value;
+                symbol.pivot_x = (int)point_x_val.Value;
 
             }
             else
             {
-                var p = current_sym.geometry[selected_geometry_idx].points[selected_point_idx];
+                var p = symbol.geometry[selected_geometry_idx].points[selected_point_idx];
                 p.X = (int)point_x_val.Value;
-                current_sym.geometry[selected_geometry_idx].points[selected_point_idx] = p;
+                symbol.geometry[selected_geometry_idx].points[selected_point_idx] = p;
             }
             canvas.Refresh();
         }
@@ -729,14 +731,14 @@ namespace S52_HPGL_Editor
             if (_edit_mode == Edit_mode.EDIT_SYMBOL)
             {
 
-                current_sym.pivot_y = (int)point_y_val.Value;
+                symbol.pivot_y = (int)point_y_val.Value;
 
             }
             else
             {
-                var p = current_sym.geometry[selected_geometry_idx].points[selected_point_idx];
+                var p = symbol.geometry[selected_geometry_idx].points[selected_point_idx];
                 p.Y = (int)point_y_val.Value;
-                current_sym.geometry[selected_geometry_idx].points[selected_point_idx] = p;        
+                symbol.geometry[selected_geometry_idx].points[selected_point_idx] = p;        
             }
             canvas.Refresh();
         }
@@ -770,21 +772,21 @@ namespace S52_HPGL_Editor
                     {
                         fileContent = reader.ReadToEnd();
 
-                        HPGL.parseSymbol(fileContent, ref current_sym);
+                        HPGL.parseSymbol(fileContent, ref symbol);
 
-                        HPGL.parseGeometry(ref current_sym);
+                        HPGL.parseGeometry(ref symbol);
 
-                        current_sym.filename = filePath;
+                        symbol.filename = filePath;
 
-                        vp.center = new Point(current_sym.pivot_x, current_sym.pivot_y);
+                        vp.center = new Point(symbol.pivot_x, symbol.pivot_y);
 
                         updateExplorerList();
 
                         setEditiMode(Edit_mode.EDIT_SYMBOL); 
 
-                        sym_name_textbox.Text = current_sym.name;
+                        sym_name_textbox.Text = symbol.name;
                   
-                        sym_expo_textbox.Text = current_sym.expo;
+                        sym_expo_textbox.Text = symbol.expo;
 
                         vp.projection_scale = 1;
                         this.Refresh();
@@ -799,7 +801,7 @@ namespace S52_HPGL_Editor
             if (selected_geometry_idx != -1)
             {
 
-                var s_geom = current_sym.geometry[selected_geometry_idx];
+                var s_geom = symbol.geometry[selected_geometry_idx];
 
                 if (s_geom.type != GeometryType.CIRCLE && s_geom.type != GeometryType.POINT) {
 
@@ -825,14 +827,14 @@ namespace S52_HPGL_Editor
         // Save 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (current_sym.filename == null) {
+            if (symbol.filename == null) {
 
                 saveAsToolStripMenuItem_Click(sender, e);
                 return;
             }
             try
             {
-                File.WriteAllText(current_sym.filename, current_sym.serialize());
+                File.WriteAllText(symbol.filename, symbol.serialize());
             }
             catch {
 
@@ -852,8 +854,8 @@ namespace S52_HPGL_Editor
             {
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    File.WriteAllText(saveFileDialog1.FileName, current_sym.serialize());
-                    current_sym.filename = saveFileDialog1.FileName;
+                    File.WriteAllText(saveFileDialog1.FileName, symbol.serialize());
+                    symbol.filename = saveFileDialog1.FileName;
                 }
 
             }
@@ -861,7 +863,7 @@ namespace S52_HPGL_Editor
         // Copy symbol to clipboard
         private void copyToCpilboardToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var str = current_sym.serialize();
+            var str = symbol.serialize();
             Console.WriteLine(str);
             Clipboard.SetText(str);
         }
@@ -904,7 +906,7 @@ namespace S52_HPGL_Editor
             if (selected_geometry_idx != -1 && _fired_by_user)
             {
 
-                current_sym.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
+                symbol.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
 
                 canvas.Refresh();
             }
@@ -915,7 +917,7 @@ namespace S52_HPGL_Editor
             if (selected_geometry_idx != -1 && _fired_by_user)
             {
 
-                current_sym.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
+                symbol.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
               
                 canvas.Refresh();
             }
@@ -926,7 +928,7 @@ namespace S52_HPGL_Editor
             if (selected_geometry_idx != -1 && _fired_by_user)
             {
 
-                current_sym.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
+                symbol.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
               
                 canvas.Refresh();
             }
@@ -937,7 +939,7 @@ namespace S52_HPGL_Editor
         {
             if (selected_geometry_idx != -1)
             {
-                current_sym.geometry[selected_geometry_idx].setScaleTransform((int)scale_value.Value);
+                symbol.geometry[selected_geometry_idx].setScaleTransform((int)scale_value.Value);
                 canvas.Refresh();
             }
         }
@@ -951,9 +953,9 @@ namespace S52_HPGL_Editor
 
                 if (new_index < 0)
                     return;
-                var item = current_sym.geometry[selected_geometry_idx];
-                current_sym.geometry.RemoveAt(selected_geometry_idx);
-                current_sym.geometry.Insert(new_index, item);
+                var item = symbol.geometry[selected_geometry_idx];
+                symbol.geometry.RemoveAt(selected_geometry_idx);
+                symbol.geometry.Insert(new_index, item);
 
                 selected_geometry_idx = new_index;
 
@@ -968,12 +970,12 @@ namespace S52_HPGL_Editor
             {
                 int new_index = selected_geometry_idx+1;
 
-                if (new_index > current_sym.geometry.Count()-1)
+                if (new_index > symbol.geometry.Count()-1)
                     return;
 
-                var item = current_sym.geometry[selected_geometry_idx];
-                current_sym.geometry.RemoveAt(selected_geometry_idx);
-                current_sym.geometry.Insert(new_index, item);
+                var item = symbol.geometry[selected_geometry_idx];
+                symbol.geometry.RemoveAt(selected_geometry_idx);
+                symbol.geometry.Insert(new_index, item);
 
                 selected_geometry_idx = new_index;
 
@@ -987,7 +989,7 @@ namespace S52_HPGL_Editor
             if (selected_geometry_idx != -1 && _fired_by_user)
             {
  
-                current_sym.geometry[selected_geometry_idx].setScaleTransform((int)scale_value.Value);
+                symbol.geometry[selected_geometry_idx].setScaleTransform((int)scale_value.Value);
 
                 canvas.Refresh();
             }
@@ -1029,12 +1031,12 @@ namespace S52_HPGL_Editor
 
         private void sym_name_textbox_TextChanged(object sender, EventArgs e)
         {
-            current_sym.name = sym_name_textbox.Text;
+            symbol.name = sym_name_textbox.Text;
         }
 
         private void sym_expo_textbox_TextChanged(object sender, EventArgs e)
         {
-            current_sym.expo = sym_expo_textbox.Text;
+            symbol.expo = sym_expo_textbox.Text;
         }
 
         private void color_prop_combo_DrawItem(object sender, DrawItemEventArgs e)
@@ -1054,7 +1056,7 @@ namespace S52_HPGL_Editor
 
         void convertGeometry(int idx, GeometryType to_type) {
 
-            current_sym.geometry[idx].type = to_type;
+            symbol.geometry[idx].type = to_type;
             updateExplorerList();
             canvas.Refresh();
 
@@ -1062,7 +1064,7 @@ namespace S52_HPGL_Editor
 
         private void previewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PreviewForm prf = new PreviewForm(ref current_sym);
+            PreviewForm prf = new PreviewForm(ref symbol);
             prf.Show();
         }
 
