@@ -230,14 +230,14 @@ namespace S52_HPGL_Editor
                     var p = g.points[0];
 
                     if (p.X+radius > maxX)
-                        maxX = p.X;
-                    if (p.Y+radius > maxY)
-                        maxY = p.Y;
+                        maxX = p.X+radius;
+                    if (p.Y + radius > maxY)
+                        maxY = p.Y + radius;
 
-                    if (p.X-radius < minX)
-                        minX = p.X;
-                    if (p.Y-radius < minY)
-                        minY = p.Y;
+                    if (p.X - radius < minX)
+                        minX = p.X - radius;
+                    if (p.Y - radius < minY)
+                        minY = p.Y - radius;
 
                 }
 
