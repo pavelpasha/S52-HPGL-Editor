@@ -563,9 +563,7 @@ namespace S52_HPGL_Editor
 
             // Set things to default
             foreach (var g in current_sym.geometry)
-                g.selected = false;
-
-            
+                g.selected = false;       
 
             color_prop_combo.Enabled = false;
             width_prop.Enabled = false;
@@ -574,12 +572,7 @@ namespace S52_HPGL_Editor
             point_x_val.Enabled = false;
             point_y_val.Enabled = false;
             circle_filled_prop.Enabled = false;
-
-
-
-
             //
-
 
             var s_geom = current_sym.geometry[selected_geometry_idx];
             s_geom.selected = true;
@@ -589,13 +582,10 @@ namespace S52_HPGL_Editor
             color_prop_combo.SelectedIndex = color_prop_combo.FindStringExact(s_geom.color);
             transp_prop.Value = s_geom.transparency;
 
-            if (s_geom.type == GeometryType.LINE || s_geom.type == GeometryType.POINT)
-            {
-
-                width_prop.Enabled = true;
-                width_prop.Value = current_sym.geometry[selected_geometry_idx].penWidth;
-            }
-            else if (s_geom.type == GeometryType.CIRCLE)
+            width_prop.Enabled = true;
+            width_prop.Value = current_sym.geometry[selected_geometry_idx].penWidth;
+          
+            if (s_geom.type == GeometryType.CIRCLE)
             {
                 var ci = s_geom as HCircle;
 
@@ -715,16 +705,7 @@ namespace S52_HPGL_Editor
                 canvas.Refresh();
             }
         }
-        // Scale changed
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-            if (selected_geometry_idx != -1)
-            {
-                current_sym.geometry[selected_geometry_idx].setScaleTransform((int)scale_value.Value);
-                canvas.Refresh();
-            }
-        }
-
+   
         private void point_x_val_ValueChanged(object sender, EventArgs e)
         {
 
@@ -760,11 +741,8 @@ namespace S52_HPGL_Editor
             canvas.Refresh();
         }
 
-      
-
-        
-
-
+              
+   
         /// Strip menu handlers
 
         // Open file
@@ -875,6 +853,7 @@ namespace S52_HPGL_Editor
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     File.WriteAllText(saveFileDialog1.FileName, current_sym.serialize());
+                    current_sym.filename = saveFileDialog1.FileName;
                 }
 
             }
@@ -920,7 +899,6 @@ namespace S52_HPGL_Editor
         }
 
         /// Geometry transform handlers
-
         private void rotate_value_ValueChanged(object sender, EventArgs e)
         {
             if (selected_geometry_idx != -1 && _fired_by_user)
@@ -953,6 +931,17 @@ namespace S52_HPGL_Editor
                 canvas.Refresh();
             }
         }
+
+        // Scale changed
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            if (selected_geometry_idx != -1)
+            {
+                current_sym.geometry[selected_geometry_idx].setScaleTransform((int)scale_value.Value);
+                canvas.Refresh();
+            }
+        }
+        ///
 
         private void z_minus_Click(object sender, EventArgs e)
         {
@@ -1036,6 +1025,7 @@ namespace S52_HPGL_Editor
             }
            
         }
+        //
 
         private void sym_name_textbox_TextChanged(object sender, EventArgs e)
         {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace S52_HPGL_Editor
 {
+    //  The Symbol class represents a whole S52 Vector symbol with its pivot point, size, description and geometry
     public class Symbol
     {
 
@@ -17,14 +18,12 @@ namespace S52_HPGL_Editor
         public char type;
         public List<HGeometry> geometry = null;
         public string filename = null;
+
         public Symbol()
         {
-
             geometry = new List<HGeometry>();
         }
-
-
-
+   
         public void paint(ref System.Drawing.Graphics canvas, ref ViewPort vp, bool polygonOutline = false)
         {
 
@@ -191,6 +190,7 @@ namespace S52_HPGL_Editor
             }
         }
 
+        // Move whole symbol
         public void move(int dx, int dy) {
 
             foreach (var g in geometry) {
@@ -248,44 +248,7 @@ namespace S52_HPGL_Editor
             height = maxY - minY;
 
         }
-
-
-        private static char getRandomChar()
-        {
-
-            char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ^&".ToCharArray();
-            Random r = new Random();
-            int i = r.Next(chars.Length);
-            return chars[i];
-        }
-
-
-        private  Dictionary<string, char> createColRef()
-        {
-
-            var colref = new Dictionary<string, char>();
-
-            foreach (var g in geometry)
-            {
-                if (!colref.ContainsKey(g.color))
-                {
-
-                    char COL = getRandomChar();
-                    while (colref.ContainsValue(COL))
-                    {
-                        COL = getRandomChar();
-                        Console.WriteLine(COL);
-                    }
-
-                    colref[g.color] = COL;
-
-                }
-
-            }
-
-            return colref;
-
-        }
+    
 
         public  string serialize()
         {
@@ -401,6 +364,43 @@ namespace S52_HPGL_Editor
 
 
             return String.Format("0001\n{0}\n{1}{2}{3}{4}VCT{5,5:#####}{6}\n****", symb, definition, expo_string, colref_str, type, instr_str.Length,instr_str);
+
+        }
+
+        // Helpers
+        private static char getRandomChar()
+        {
+
+            char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ^&".ToCharArray();
+            Random r = new Random();
+            int i = r.Next(chars.Length);
+            return chars[i];
+        }
+
+        private Dictionary<string, char> createColRef()
+        {
+
+            var colref = new Dictionary<string, char>();
+
+            foreach (var g in geometry)
+            {
+                if (!colref.ContainsKey(g.color))
+                {
+
+                    char COL = getRandomChar();
+                    while (colref.ContainsValue(COL))
+                    {
+                        COL = getRandomChar();
+                        Console.WriteLine(COL);
+                    }
+
+                    colref[g.color] = COL;
+
+                }
+
+            }
+
+            return colref;
 
         }
 
