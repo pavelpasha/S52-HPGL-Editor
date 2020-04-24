@@ -73,8 +73,7 @@ namespace S52_HPGL_Editor
 
         }
 
-        
-
+       
         public void setRotationTransform(int rotate, Point origin = new Point())
         {
           
@@ -96,7 +95,6 @@ namespace S52_HPGL_Editor
             applyTransform();
         }
 
-
         public void setScaleTransform(int scale)
         {
 
@@ -115,8 +113,6 @@ namespace S52_HPGL_Editor
 
             applyTransform();
         }
-
-
 
         public void movePoint(int idx, int dx, int dy)
         {

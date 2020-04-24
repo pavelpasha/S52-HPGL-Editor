@@ -223,10 +223,28 @@ namespace S52_HPGL_Editor
             int minY = 32767;
 
             foreach (var g in geometry) {
+                // If it is circle, a radius should be considered
+                if (g.type == GeometryType.CIRCLE) {
+
+                    int radius = (g as HCircle).radius;
+                    var p = g.points[0];
+
+                    if (p.X+radius > maxX)
+                        maxX = p.X;
+                    if (p.Y+radius > maxY)
+                        maxY = p.Y;
+
+                    if (p.X-radius < minX)
+                        minX = p.X;
+                    if (p.Y-radius < minY)
+                        minY = p.Y;
+
+                }
 
                 foreach (var p in g.points)
                 {
 
+                    
                     if (p.X > maxX)
                         maxX = p.X;
                     if (p.Y > maxY)
