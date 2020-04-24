@@ -51,7 +51,7 @@ namespace S52_HPGL_Editor
             int c_x = width / 2;
             int c_y = height / 2;
             int k = (int)(100 / ppm) / scale;
-   
+
             p.X = (int)(c_x + (p.X - c_x) / k) - symbol.offset_x/k;
             p.Y = (int)(c_y - (c_y - p.Y) / k) - symbol.offset_y/k;
 
@@ -86,8 +86,6 @@ namespace S52_HPGL_Editor
                 var color = Color.FromArgb(transparency, Style.S52colors[geom.color]);
                 Pen pen = new Pen(color, geom.penWidth *scale);
 
-
-
                 switch (geom.type)
                 {
                     case GeometryType.LINE:
@@ -105,15 +103,15 @@ namespace S52_HPGL_Editor
 
                         }
 
-
                         g.DrawLines(pen, projPnts);
-
-
                         break;
+
                     case GeometryType.CIRCLE:
                         var circle = geom as HCircle;
                         p = projectPoint(circle.points[0]);
+                        Console.WriteLine(circle.radius);
                         var radius = circle.radius / k;
+                        Console.WriteLine(radius);
                         if (circle.filled)
                             g.FillEllipse(new SolidBrush(color), p.X - radius, p.Y - radius, radius * 2, radius * 2);
                         else
