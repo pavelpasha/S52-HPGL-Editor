@@ -249,11 +249,13 @@ namespace S52_HPGL_Editor
 
         }
     
-
-        public  string serialize()
+        // Convert symbol metadata and its geometry to S52 PresLib description format 
+        public string serialize()
         {
-
+            // Find actual symbol bounding box
             updateSizes();
+
+            int  instr_desired_lenght = 100;
 
             string colref_str = "";
             string definition = "SYMD";
@@ -282,25 +284,25 @@ namespace S52_HPGL_Editor
             int cur_transp = -1;
 
             string instr_str = "";
-
+            string instr_line_str = "";
             foreach (var g in geometry)
             {
 
                 if (cur_pen_color != g.color)
                 {
-                    instr_str += String.Format("SP{0};", colref[g.color]);
+                    instr_line_str += String.Format("SP{0};", colref[g.color]);
                     cur_pen_color = g.color;
 
                 }
                 if (cur_pen_width != g.penWidth)
                 {
-                    instr_str += String.Format("SW{0};", g.penWidth);
+                    instr_line_str += String.Format("SW{0};", g.penWidth);
                     cur_pen_width = g.penWidth;
 
                 }
                 if (cur_transp != g.transparency)
                 {
-                    instr_str += String.Format("ST{0};", g.transparency);
+                    instr_line_str += String.Format("ST{0};", g.transparency);
                     cur_transp = g.transparency;
 
                 }
@@ -309,61 +311,71 @@ namespace S52_HPGL_Editor
                 switch (g.type)
                 {
                     case GeometryType.LINE:
-                        instr_str += String.Format("PU{0},{1};", g.points[0].X, g.points[0].Y);
+                        instr_line_str += String.Format("PU{0},{1};", g.points[0].X, g.points[0].Y);
 
                         if (g.points.Count() < 2) continue;
 
                         for (int i = 1; i < g.points.Count(); i++)
                         {
 
-                            instr_str += String.Format("PD{0},{1};", g.points[i].X, g.points[i].Y);
+                            instr_line_str += String.Format("PD{0},{1};", g.points[i].X, g.points[i].Y);
                         }
 
                         break;
                     case GeometryType.CIRCLE:
                         var ci = g as HCircle;
 
-                        instr_str += String.Format("PU{0},{1};", ci.points[0].X, ci.points[0].Y);
+                        instr_line_str += String.Format("PU{0},{1};", ci.points[0].X, ci.points[0].Y);
 
                         if (ci.filled)
                         {
 
-                            instr_str += String.Format("PM0;CI{0};PM2;FP;", ci.radius);
+                            instr_line_str += String.Format("PM0;CI{0};PM2;FP;", ci.radius);
 
                         }
                         else
                         {
 
-                            instr_str += String.Format("CI{0};", ci.radius);
+                            instr_line_str += String.Format("CI{0};", ci.radius);
                         }
 
                         break;
 
                     case GeometryType.POLYGON:
 
-                        instr_str += String.Format("PU{0},{1};PM0;", g.points[0].X, g.points[0].Y);
+                        instr_line_str += String.Format("PU{0},{1};PM0;", g.points[0].X, g.points[0].Y);
 
                         if (g.points.Count() < 2) continue;
-                        instr_str += "PD";
+                        instr_line_str += "PD";
                         string delim = ",";
                         for (int i = 1; i < g.points.Count(); i++)
                         {
                             if (i == g.points.Count() - 1) delim = ";";
-                            instr_str += String.Format("{0},{1}{2}", g.points[i].X, g.points[i].Y, delim);
+                            instr_line_str += String.Format("{0},{1}{2}", g.points[i].X, g.points[i].Y, delim);
                         }
-                        instr_str += "PM2;FP;";
+                        instr_line_str += "PM2;FP;";
                         break;
 
                     case GeometryType.POINT:
 
-                        instr_str += String.Format("PU{0},{1};PD;", g.points[0].X, g.points[0].Y);
+                        instr_line_str += String.Format("PU{0},{1};PD;", g.points[0].X, g.points[0].Y);
                         break;
+                }
+
+                
+                if (instr_line_str.Length > instr_desired_lenght - 10) {
+
+                    instr_str += String.Format(type + "VCT{0,5:#####}{1}\n", instr_line_str.Length, instr_line_str);
+                    instr_line_str = "";
+
                 }
 
             }
 
+            if(instr_line_str.Length != 0)
+                instr_str += String.Format(type + "VCT{0,5:#####}{1}\n", instr_line_str.Length, instr_line_str);
 
-            return String.Format("0001\n{0}\n{1}{2}{3}{4}VCT{5,5:#####}{6}\n****", symb, definition, expo_string, colref_str, type, instr_str.Length,instr_str);
+            return String.Format("0001\n{0}\n{1}{2}{3}{4}****", symb, definition, expo_string, colref_str, instr_str);
 
         }
 

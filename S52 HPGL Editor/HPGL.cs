@@ -101,7 +101,6 @@ namespace S52_HPGL_Editor
                 }
 
 
-
             }
 
             return true;
@@ -109,34 +108,9 @@ namespace S52_HPGL_Editor
         }
 
 
-        static Color getColor(string colorCode, string col)
-        {
 
 
-            int noColors = col.Length / 6;
-            for (int i = 0, j = 0; i < noColors; i++, j += 6)
-            {
-                if (col.Substring(j, 1) == colorCode) return Style.S52colors[col.Substring(j + 1, 5)];
-            }
-            return Style.S52colors[col + 1]; // Default to first color if not found.
-
-        }
-
-        static string getColorName(string colorCode, string col)
-        {
-
-
-            int noColors = col.Length / 6;
-            for (int i = 0, j = 0; i < noColors; i++, j += 6)
-            {
-                if (col.Substring(j, 1) == colorCode) return col.Substring(j + 1, 5);
-            }
-
-            return "";
-
-        }
-
-       
+       // Converts symbol instructions to geometry
         public static void parseGeometry(ref Symbol sym)
         {
 
@@ -151,7 +125,6 @@ namespace S52_HPGL_Editor
             int transparency = 0;
             string color_name = "";
             int penWidth = 1;
-            bool newLine = false;
 
             var line = new HLineString();
 
@@ -222,7 +195,7 @@ namespace S52_HPGL_Editor
                                         polygonbuffer.Add(curpos);
                                     else
                                     {
-                                        newLine = true;
+            
                                         line.points.Add(curpos);
 
                                     }
@@ -312,9 +285,34 @@ namespace S52_HPGL_Editor
 
         }
 
-       
+        // Helpers
+        static Color getColor(string colorCode, string col)
+        {
 
-        
+
+            int noColors = col.Length / 6;
+            for (int i = 0, j = 0; i < noColors; i++, j += 6)
+            {
+                if (col.Substring(j, 1) == colorCode) return Style.S52colors[col.Substring(j + 1, 5)];
+            }
+            return Style.S52colors["NODTA"]; // Default.
+
+        }
+
+        static string getColorName(string colorCode, string col)
+        {
+
+
+            int noColors = col.Length / 6;
+            for (int i = 0, j = 0; i < noColors; i++, j += 6)
+            {
+                if (col.Substring(j, 1) == colorCode) return col.Substring(j + 1, 5);
+            }
+
+            return "";
+
+        }
+
     }
 
 
