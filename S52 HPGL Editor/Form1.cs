@@ -352,7 +352,7 @@ namespace S52_HPGL_Editor
         private void Panel1_MouseWheel(object sender, MouseEventArgs e)
         {
 
-            //
+  
             var zoom_mouse = new Point(e.X, e.Y);
 
             var zoom_mouse_proj = vp.unproject(zoom_mouse);
@@ -850,15 +850,15 @@ namespace S52_HPGL_Editor
             saveFileDialog1.FilterIndex = 2;
             saveFileDialog1.RestoreDirectory = true;
 
+            saveFileDialog1.FileName = symbol.name+".txt";
+
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     File.WriteAllText(saveFileDialog1.FileName, symbol.serialize());
                     symbol.filename = saveFileDialog1.FileName;
                 }
 
-            }
+            
         }
         // Copy symbol to clipboard
         private void copyToCpilboardToolStripMenuItem_Click(object sender, EventArgs e)
