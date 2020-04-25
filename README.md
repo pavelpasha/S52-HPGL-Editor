@@ -13,4 +13,5 @@ The are 3 editing mode:
 
 # ViewPort controls:
 Zoom: mouse wheel
+
 Pan: mouse middle button + mouse move
