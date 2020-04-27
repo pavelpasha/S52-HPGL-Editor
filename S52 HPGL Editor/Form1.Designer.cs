@@ -41,6 +41,9 @@
             this.polygonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.circleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.previewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.polygonOutlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPoints_menu_btn = new System.Windows.Forms.ToolStripMenuItem();
             this.ed_sym_mode = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,9 +76,6 @@
             this.label9 = new System.Windows.Forms.Label();
             this.sym_expo_textbox = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.previewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.polygonOutlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.width_prop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.transp_prop)).BeginInit();
@@ -140,28 +140,28 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save as";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // copyToCpilboardToolStripMenuItem
             // 
             this.copyToCpilboardToolStripMenuItem.Name = "copyToCpilboardToolStripMenuItem";
-            this.copyToCpilboardToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.copyToCpilboardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.copyToCpilboardToolStripMenuItem.Text = "Copy to cpilboard";
             this.copyToCpilboardToolStripMenuItem.Click += new System.EventHandler(this.copyToCpilboardToolStripMenuItem_Click);
             // 
@@ -203,6 +203,29 @@
             this.pointToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.pointToolStripMenuItem.Text = "Point";
             this.pointToolStripMenuItem.Click += new System.EventHandler(this.pointToolStripMenuItem_Click);
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.previewToolStripMenuItem,
+            this.polygonOutlineToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // previewToolStripMenuItem
+            // 
+            this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
+            this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.previewToolStripMenuItem.Text = "Preview";
+            this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
+            // 
+            // polygonOutlineToolStripMenuItem
+            // 
+            this.polygonOutlineToolStripMenuItem.Name = "polygonOutlineToolStripMenuItem";
+            this.polygonOutlineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.polygonOutlineToolStripMenuItem.Text = "Polygon outline";
+            this.polygonOutlineToolStripMenuItem.Click += new System.EventHandler(this.polygonOutlineToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -591,31 +614,6 @@
             this.label10.Size = new System.Drawing.Size(34, 13);
             this.label10.TabIndex = 16;
             this.label10.Text = "Expo:";
-            // 
-            // viewToolStripMenuItem
-            // 
-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.previewToolStripMenuItem,
-            this.polygonOutlineToolStripMenuItem});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.viewToolStripMenuItem.Text = "View";
-            // 
-            // previewToolStripMenuItem
-            // 
-            this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
-            this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.previewToolStripMenuItem.Text = "Preview";
-            this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
-            // 
-            // polygonOutlineToolStripMenuItem
-            // 
-            this.polygonOutlineToolStripMenuItem.Checked = true;
-            this.polygonOutlineToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.polygonOutlineToolStripMenuItem.Name = "polygonOutlineToolStripMenuItem";
-            this.polygonOutlineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.polygonOutlineToolStripMenuItem.Text = "Polygon outline";
-            this.polygonOutlineToolStripMenuItem.Click += new System.EventHandler(this.polygonOutlineToolStripMenuItem_Click);
             // 
             // Form1
             // 

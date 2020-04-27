@@ -562,6 +562,7 @@ namespace S52_HPGL_Editor
 
             _fired_by_user = false;
             selected_geometry_idx = idx;
+            selected_point_idx = -1; 
 
             // Set things to default
             foreach (var g in symbol.geometry)
@@ -610,11 +611,15 @@ namespace S52_HPGL_Editor
 
             if (s_geom.transform != null)
             {
-
-                rotate_value.Value = s_geom.transform.rotate_angle;
-                scale_value.Value = s_geom.transform.scale;
-                rot_origin_x.Value = s_geom.transform.rotate_origin.X;
-                rot_origin_y.Value = s_geom.transform.rotate_origin.Y;
+                // TODO: need to find out why exceptions periodicly throws there
+                try
+                {
+                    rotate_value.Value = s_geom.transform.rotate_angle;
+                    scale_value.Value = s_geom.transform.scale;
+                    rot_origin_x.Value = s_geom.transform.rotate_origin.X;
+                    rot_origin_y.Value = s_geom.transform.rotate_origin.Y;
+                }
+                catch  { }
 
             }
             else {
@@ -656,7 +661,7 @@ namespace S52_HPGL_Editor
 
         private void geom_explorer_SelectedIndexChanged(object sender, EventArgs e)
         {
-            selected_point_idx = -1;
+            
             selectGeometry(geom_explorer.SelectedIndex);
             canvas.Refresh();
         }
@@ -681,9 +686,7 @@ namespace S52_HPGL_Editor
             selected_geometry_idx = -1;
             updateExplorerList();
             delete_itm_btn.Enabled = false;
-            
-          
-            canvas.Refresh();
+            geom_explorer.Focus();  // To unfocus copy buttons
         }
         // Copy geometry
         private void copy_itm_btn_Click(object sender, EventArgs e)
@@ -692,7 +695,7 @@ namespace S52_HPGL_Editor
             updateExplorerList();
             geom_explorer.SelectedIndex = symbol.geometry.Count() - 1;
             selectGeometry(symbol.geometry.Count() - 1);
-            canvas.Refresh();
+            geom_explorer.Focus();  // To unfocus copy button
             
         }
 
