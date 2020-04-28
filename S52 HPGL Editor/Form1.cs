@@ -392,11 +392,9 @@ namespace S52_HPGL_Editor
 
                 case Keys.Oemplus:
                     vp.projection_scale *= 2;
-                    Refresh();
                     break;
                 case Keys.OemMinus:
                     vp.projection_scale /= 2;
-                    Refresh();
                     break;
                 case Keys.Delete: // Delete slected point 
                     if (selected_geometry_idx != -1 && selected_point_idx != -1)
@@ -406,7 +404,6 @@ namespace S52_HPGL_Editor
                             symbol.geometry[selected_geometry_idx].removePoint(selected_point_idx);
 
                             selected_point_idx = -1;
-                            Refresh();
                         }
                         
                     }
@@ -426,6 +423,7 @@ namespace S52_HPGL_Editor
 
                             symbol.geometry[selected_geometry_idx].move(-1, 0);
 
+
                         }
 
                     }
@@ -435,7 +433,6 @@ namespace S52_HPGL_Editor
                         symbol.move(-1, 0);
                     }
 
-                    Refresh();
 
                     break;
                 case Keys.Right:
@@ -459,8 +456,6 @@ namespace S52_HPGL_Editor
                         symbol.move(1, 0);
                     }
 
-                    Refresh();
-
                     break;
                 case Keys.Up:
                     if (selected_geometry_idx != -1)
@@ -474,6 +469,7 @@ namespace S52_HPGL_Editor
 
                             symbol.geometry[selected_geometry_idx].move(0, -1);
 
+
                         }
 
                     }
@@ -482,8 +478,6 @@ namespace S52_HPGL_Editor
                     {
                         symbol.move(0, -1);
                     }
-
-                    Refresh();
 
                     break;
                 case Keys.Down: 
@@ -497,9 +491,7 @@ namespace S52_HPGL_Editor
 
                             symbol.geometry[selected_geometry_idx].move(0,1);
 
-                        }
-
-                        
+                        }             
 
                     }
 
@@ -507,17 +499,20 @@ namespace S52_HPGL_Editor
                         symbol.move(0,1);
                     }
                     
-                    Refresh();
                     break;
 
                 default:
                     e.Handled = false;
-                    break;
+                    return;
+                   //break;
                     
 
             }
 
-            
+            updatePointPosition();
+            Refresh();
+
+
 
         }
 
@@ -725,6 +720,7 @@ namespace S52_HPGL_Editor
                 var p = symbol.geometry[selected_geometry_idx].points[selected_point_idx];
                 p.X = (int)point_x_val.Value;
                 symbol.geometry[selected_geometry_idx].points[selected_point_idx] = p;
+
             }
             canvas.Refresh();
         }
@@ -741,7 +737,8 @@ namespace S52_HPGL_Editor
             {
                 var p = symbol.geometry[selected_geometry_idx].points[selected_point_idx];
                 p.Y = (int)point_y_val.Value;
-                symbol.geometry[selected_geometry_idx].points[selected_point_idx] = p;        
+                symbol.geometry[selected_geometry_idx].points[selected_point_idx] = p;
+
             }
             canvas.Refresh();
         }
@@ -1077,7 +1074,7 @@ namespace S52_HPGL_Editor
             canvas.Refresh();
         }
 
-        public Color createContrastColor(Color bg)
+        private Color createContrastColor(Color bg)
         {
             int nThreshold = 105;
             int bgDelta = Convert.ToInt32((bg.R * 0.299) + (bg.G * 0.587) +
@@ -1086,6 +1083,21 @@ namespace S52_HPGL_Editor
             Color foreColor = (255 - bgDelta < nThreshold) ? Color.Black : Color.White;
             return foreColor;
         }
+
+        // Update x and y controls values if selected point was moved.
+        private void updatePointPosition() {
+
+            if (selected_point_idx != -1) {
+
+                var p = symbol.geometry[selected_geometry_idx].points[selected_point_idx];
+
+                _fired_by_user = false;
+                point_x_val.Value = p.X;
+                point_y_val.Value = p.Y;
+                _fired_by_user = true;
+            }
+
+        } 
 
     }
 }
