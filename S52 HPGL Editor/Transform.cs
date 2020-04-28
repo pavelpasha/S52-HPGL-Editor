@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace S52_HPGL_Editor
 {
+    [Serializable()]
     public class Transform
     {
 

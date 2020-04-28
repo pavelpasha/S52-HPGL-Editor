@@ -106,8 +106,6 @@ namespace S52_HPGL_Editor
             label2.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
             label3.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
             label4.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
-            delete_itm_btn.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
-            copy_itm_btn.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
             transform_group.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
 
             color_prop_combo.DataSource = new BindingSource(Style.S52colors, null);
@@ -396,14 +394,23 @@ namespace S52_HPGL_Editor
                 case Keys.OemMinus:
                     vp.projection_scale /= 2;
                     break;
-                case Keys.Delete: // Delete slected point 
-                    if (selected_geometry_idx != -1 && selected_point_idx != -1)
+                case Keys.Delete: // Delete geometry or point 
+                    if (selected_geometry_idx != -1 )
                     {
-                        if (symbol.geometry[selected_geometry_idx].points.Count() != 1) // if only one point  - not need to delete it
+                        if (selected_point_idx != -1) 
                         {
-                            symbol.geometry[selected_geometry_idx].removePoint(selected_point_idx);
+                            if (symbol.geometry[selected_geometry_idx].points.Count() != 1) // if only one point left - not need to delete it
+                            {
+                                symbol.geometry[selected_geometry_idx].removePoint(selected_point_idx);
 
-                            selected_point_idx = -1;
+                                selected_point_idx = -1;
+                            }
+                        }
+                        else {
+
+                            symbol.geometry.RemoveAt(geom_explorer.SelectedIndex);
+                            selected_geometry_idx = -1;
+                            updateExplorerList();
                         }
                         
                     }
@@ -499,6 +506,53 @@ namespace S52_HPGL_Editor
                         symbol.move(0,1);
                     }
                     
+                    break;
+                    // Copy
+                case Keys.C:
+
+                    if (e.Control && selected_geometry_idx != -1)
+                    {
+
+                        var selected_geometry = symbol.geometry[selected_geometry_idx];
+                        Clipboard.Clear();
+
+                        // Set data to clipboard
+
+                        Clipboard.SetDataObject(selected_geometry);
+                        e.SuppressKeyPress = true;
+                    }
+                    break;
+
+                    //Paste
+                case Keys.V:
+                    if (e.Control)
+                    {
+                        // Get data from clipboard
+                        HGeometry paste_result = null;
+                    
+                        IDataObject data_object = Clipboard.GetDataObject();
+
+                        if (Clipboard.ContainsData("S52_HPGL_Editor.HLineString"))
+                            paste_result = (HGeometry)Clipboard.GetData("S52_HPGL_Editor.HLineString");
+                        else if (Clipboard.ContainsData("S52_HPGL_Editor.HPolygon"))
+                            paste_result = (HGeometry)Clipboard.GetData("S52_HPGL_Editor.HPolygon");
+                        if (Clipboard.ContainsData("S52_HPGL_Editor.HPoint"))
+                            paste_result = (HGeometry)Clipboard.GetData("S52_HPGL_Editor.HPoint");
+                        else if (Clipboard.ContainsData("S52_HPGL_Editor.HCircle"))
+                            paste_result = (HGeometry)Clipboard.GetData("S52_HPGL_Editor.HCircle");
+
+                        if (paste_result != null)
+                        {
+                            symbol.geometry.Add(paste_result);
+                            updateExplorerList();
+                            geom_explorer.SelectedIndex = symbol.geometry.Count() - 1;
+                            selectGeometry(symbol.geometry.Count() - 1);
+
+                        }
+                        e.SuppressKeyPress = true;
+
+
+                    }
                     break;
 
                 default:
@@ -600,8 +654,6 @@ namespace S52_HPGL_Editor
 
             }
 
-            delete_itm_btn.Enabled = true;
-            copy_itm_btn.Enabled = true;
             transform_group.Enabled = true;
 
             if (s_geom.transform != null)
@@ -674,38 +726,7 @@ namespace S52_HPGL_Editor
             canvas.Refresh();
         }
 
-        private void delete_itm_btn_Click(object sender, EventArgs e)
-        {
-
-            symbol.geometry.RemoveAt(geom_explorer.SelectedIndex);
-            selected_geometry_idx = -1;
-            updateExplorerList();
-            delete_itm_btn.Enabled = false;
-            geom_explorer.Focus();  // To unfocus copy buttons
-        }
-        // Copy geometry
-        private void copy_itm_btn_Click(object sender, EventArgs e)
-        {
-            symbol.geometry.Add(symbol.geometry[geom_explorer.SelectedIndex].Copy());
-            updateExplorerList();
-            geom_explorer.SelectedIndex = symbol.geometry.Count() - 1;
-            selectGeometry(symbol.geometry.Count() - 1);
-            geom_explorer.Focus();  // To unfocus copy button
-            
-        }
-
-        private void rotate_val_ValueChanged(object sender, EventArgs e)
-        {
-            if (selected_geometry_idx != -1)
-            {
-
-
-                symbol.geometry[selected_geometry_idx].setRotationTransform((int)rotate_value.Value, new Point((int)rot_origin_x.Value, (int)rot_origin_y.Value));
-
-                canvas.Refresh();
-            }
-        }
-   
+      
         private void point_x_val_ValueChanged(object sender, EventArgs e)
         {
 
@@ -1083,6 +1104,8 @@ namespace S52_HPGL_Editor
             Color foreColor = (255 - bgDelta < nThreshold) ? Color.Black : Color.White;
             return foreColor;
         }
+
+    
 
         // Update x and y controls values if selected point was moved.
         private void updatePointPosition() {

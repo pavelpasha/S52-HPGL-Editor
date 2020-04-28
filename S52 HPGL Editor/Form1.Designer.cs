@@ -56,8 +56,6 @@
             this.geom_explorer = new System.Windows.Forms.ListBox();
             this.label4 = new System.Windows.Forms.Label();
             this.radius_prop = new System.Windows.Forms.NumericUpDown();
-            this.delete_itm_btn = new System.Windows.Forms.Button();
-            this.copy_itm_btn = new System.Windows.Forms.Button();
             this.transform_group = new System.Windows.Forms.GroupBox();
             this.scale_value = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
@@ -140,28 +138,28 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.saveAsToolStripMenuItem.Text = "Save as";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // copyToCpilboardToolStripMenuItem
             // 
             this.copyToCpilboardToolStripMenuItem.Name = "copyToCpilboardToolStripMenuItem";
-            this.copyToCpilboardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyToCpilboardToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.copyToCpilboardToolStripMenuItem.Text = "Copy to cpilboard";
             this.copyToCpilboardToolStripMenuItem.Click += new System.EventHandler(this.copyToCpilboardToolStripMenuItem_Click);
             // 
@@ -216,14 +214,14 @@
             // previewToolStripMenuItem
             // 
             this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
-            this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.previewToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.previewToolStripMenuItem.Text = "Preview";
             this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
             // 
             // polygonOutlineToolStripMenuItem
             // 
             this.polygonOutlineToolStripMenuItem.Name = "polygonOutlineToolStripMenuItem";
-            this.polygonOutlineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.polygonOutlineToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.polygonOutlineToolStripMenuItem.Text = "Polygon outline";
             this.polygonOutlineToolStripMenuItem.Click += new System.EventHandler(this.polygonOutlineToolStripMenuItem_Click);
             // 
@@ -335,9 +333,9 @@
             // geom_explorer
             // 
             this.geom_explorer.FormattingEnabled = true;
-            this.geom_explorer.Location = new System.Drawing.Point(606, 323);
+            this.geom_explorer.Location = new System.Drawing.Point(606, 297);
             this.geom_explorer.Name = "geom_explorer";
-            this.geom_explorer.Size = new System.Drawing.Size(145, 160);
+            this.geom_explorer.Size = new System.Drawing.Size(145, 186);
             this.geom_explorer.TabIndex = 7;
             this.geom_explorer.SelectedIndexChanged += new System.EventHandler(this.geom_explorer_SelectedIndexChanged);
             this.geom_explorer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.geom_explorer_MouseDown);
@@ -374,28 +372,6 @@
             0,
             0});
             this.radius_prop.ValueChanged += new System.EventHandler(this.radius_prop_ValueChanged);
-            // 
-            // delete_itm_btn
-            // 
-            this.delete_itm_btn.Enabled = false;
-            this.delete_itm_btn.Location = new System.Drawing.Point(603, 298);
-            this.delete_itm_btn.Name = "delete_itm_btn";
-            this.delete_itm_btn.Size = new System.Drawing.Size(75, 23);
-            this.delete_itm_btn.TabIndex = 8;
-            this.delete_itm_btn.Text = "delete";
-            this.delete_itm_btn.UseVisualStyleBackColor = true;
-            this.delete_itm_btn.Click += new System.EventHandler(this.delete_itm_btn_Click);
-            // 
-            // copy_itm_btn
-            // 
-            this.copy_itm_btn.Enabled = false;
-            this.copy_itm_btn.Location = new System.Drawing.Point(676, 298);
-            this.copy_itm_btn.Name = "copy_itm_btn";
-            this.copy_itm_btn.Size = new System.Drawing.Size(75, 23);
-            this.copy_itm_btn.TabIndex = 8;
-            this.copy_itm_btn.Text = "copy";
-            this.copy_itm_btn.UseVisualStyleBackColor = true;
-            this.copy_itm_btn.Click += new System.EventHandler(this.copy_itm_btn_Click);
             // 
             // transform_group
             // 
@@ -632,8 +608,6 @@
             this.Controls.Add(this.point_y_val);
             this.Controls.Add(this.point_x_val);
             this.Controls.Add(this.current_point_label);
-            this.Controls.Add(this.copy_itm_btn);
-            this.Controls.Add(this.delete_itm_btn);
             this.Controls.Add(this.geom_explorer);
             this.Controls.Add(this.radius_prop);
             this.Controls.Add(this.transp_prop);
@@ -685,8 +659,6 @@
         private System.Windows.Forms.ListBox geom_explorer;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown radius_prop;
-        private System.Windows.Forms.Button delete_itm_btn;
-        private System.Windows.Forms.Button copy_itm_btn;
         private System.Windows.Forms.GroupBox transform_group;
         private System.Windows.Forms.NumericUpDown scale_value;
         private System.Windows.Forms.Label label6;

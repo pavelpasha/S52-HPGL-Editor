@@ -8,6 +8,18 @@ using System.Threading.Tasks;
 namespace S52_HPGL_Editor
 {
 
+    [Serializable()]
+    class Person
+    {
+        public GeometryType type;
+        public string color = "CHBLK"; // default color
+        public int penWidth = 1;
+        public int transparency = 0;
+        public bool selected = false;
+        public List<Point> points = new List<Point>();
+        public Transform transform = null;
+    }
+
     public enum GeometryType
     {
         LINE,
@@ -16,6 +28,7 @@ namespace S52_HPGL_Editor
         POINT,
         NONE
     }
+    [Serializable()]
     public class HGeometry
     {
         public GeometryType type;
@@ -276,7 +289,7 @@ namespace S52_HPGL_Editor
     }
 
 
-
+    [Serializable()]
     class HLineString : HGeometry
     {
         public HLineString() { type = GeometryType.LINE; }
@@ -295,6 +308,7 @@ namespace S52_HPGL_Editor
 
 
     }
+    [Serializable()]
     class HCircle : HGeometry
     {
         public HCircle() { type = GeometryType.CIRCLE; }
@@ -302,13 +316,14 @@ namespace S52_HPGL_Editor
         public bool filled = false;
 
     }
-
+    [Serializable()]
     class HPoint : HGeometry
     {
         public HPoint() { type = GeometryType.POINT; }
 
 
     }
+    [Serializable()]
     class HPolygon : HGeometry
     {
         public HPolygon() { type = GeometryType.POLYGON; }
