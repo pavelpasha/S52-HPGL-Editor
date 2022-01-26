@@ -2,24 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace S52_HPGL_Editor
 {
 
-    [Serializable()]
-    class Person
-    {
-        public GeometryType type;
-        public string color = "CHBLK"; // default color
-        public int penWidth = 1;
-        public int transparency = 0;
-        public bool selected = false;
-        public List<Point> points = new List<Point>();
-        public Transform transform = null;
-    }
-
+ 
     public enum GeometryType
     {
         LINE,
@@ -129,6 +117,7 @@ namespace S52_HPGL_Editor
 
         public void movePoint(int idx, int dx, int dy)
         {
+            if (idx < 0 || idx >= points.Count) return;
             var p = points[idx];
             p.X += dx;
             p.Y += dy;
@@ -142,6 +131,19 @@ namespace S52_HPGL_Editor
                 p.X += dx;
                 p.Y += dy;
 
+                transform.origin_points[idx] = p;
+            }
+
+        }
+
+        public void setPoint(int idx, int x, int y)
+        {
+            if (idx < 0 || idx >= points.Count) return;
+            var p = new Point(x, y);
+            points[idx] = p;
+        
+            if (transform != null)
+            {
                 transform.origin_points[idx] = p;
             }
 
@@ -259,8 +261,8 @@ namespace S52_HPGL_Editor
                 return bounding_box;
             }
 
-            int maxX = -1;
-            int maxY = -1;
+            int maxX = 0;
+            int maxY = 0;
             int minX = 32767;
             int minY = 32767;
 
