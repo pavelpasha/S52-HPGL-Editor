@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace S52_HPGL_Editor
@@ -22,7 +18,7 @@ namespace S52_HPGL_Editor
         private readonly ContextMenuStrip collectionRoundMenuStrip;
 
         int _mouse_startX, _mouse_startY;
-        bool _fired_by_user = false; // If value changed by user
+        bool _fired_by_user = true; // If value changed by user
 
         GeometryType _addMode = GeometryType.NONE;  // Store geometry type of geometry wich we are going to add
         Edit_mode _edit_mode = Edit_mode.EDIT_GEOMETRY;
@@ -39,7 +35,7 @@ namespace S52_HPGL_Editor
         }
 
 
-        private void setEditiMode(Edit_mode mode)
+        private void setEditMode(Edit_mode mode)
         {
 
             // Set things to default
@@ -107,6 +103,87 @@ namespace S52_HPGL_Editor
             }
 
             canvas.Refresh();
+        }
+
+        private void selectGeometry(int idx, bool change_mode = true)
+        {
+            Console.WriteLine(change_mode);
+            _fired_by_user = false;
+            selected_geometry_idx = idx;
+            selected_point_idx = -1;
+
+            // Set things to default
+            foreach (var g in symbol.geometry)
+                g.selected = false;
+
+            color_prop_combo.Enabled = false;
+            width_prop.Enabled = false;
+            transp_prop.Enabled = false;
+            radius_prop.Enabled = false;
+            point_x_val.Enabled = false;
+            point_y_val.Enabled = false;
+            circle_filled_prop.Enabled = false;
+            //
+
+            var s_geom = symbol.geometry[selected_geometry_idx];
+            s_geom.selected = true;
+
+            color_prop_combo.Enabled = true;
+            transp_prop.Enabled = true;
+            color_prop_combo.SelectedIndex = color_prop_combo.FindStringExact(s_geom.color);
+            transp_prop.Value = s_geom.transparency;
+
+            width_prop.Enabled = true;
+            width_prop.Value = symbol.geometry[selected_geometry_idx].penWidth;
+
+            if (s_geom.type == GeometryType.CIRCLE)
+            {
+                var ci = s_geom as HCircle;
+
+                radius_prop.Enabled = true;
+                circle_filled_prop.Enabled = true;
+                radius_prop.Value = ci.radius;
+                circle_filled_prop.Checked = ci.filled;
+                if (!ci.filled)
+                {
+                    width_prop.Enabled = true;
+                    width_prop.Value = symbol.geometry[selected_geometry_idx].penWidth;
+
+                }
+
+            }
+
+            transform_group.Enabled = true;
+
+            if (s_geom.transform != null)
+            {
+                // TODO: need to find out why exceptions periodicly throws there
+                try
+                {
+                    rotate_value.Value = s_geom.transform.rotate_angle;
+                    scale_value.Value = s_geom.transform.scale;
+                    rot_origin_x.Value = s_geom.transform.rotate_origin.X;
+                    rot_origin_y.Value = s_geom.transform.rotate_origin.Y;
+                }
+                catch { }
+
+            }
+            else
+            {
+                rotate_value.Value = 0;
+                scale_value.Value = 100;
+                var c = s_geom.getCenterPoint();
+                rot_origin_x.Value = c.X;
+                rot_origin_y.Value = c.Y;
+            }
+            _fired_by_user = true;
+
+            if (change_mode)
+            {
+                setEditMode(Edit_mode.EDIT_GEOMETRY);
+            }
+            canvas.Refresh();
+
         }
 
         public Form1()
@@ -209,10 +286,8 @@ namespace S52_HPGL_Editor
         private void canvas_MouseDown(object sender, MouseEventArgs e)
         {
 
-
             _mouse_startX = e.X;
             _mouse_startY = e.Y;
-
 
             if (e.Button == MouseButtons.Left)
             {
@@ -226,30 +301,29 @@ namespace S52_HPGL_Editor
                     if (_addMode == GeometryType.CIRCLE)
                     {
                         new_geometry = new HCircle();
-                        setEditiMode(Edit_mode.EDIT_GEOMETRY);
+                        setEditMode(Edit_mode.EDIT_GEOMETRY);
                     }
                     else if (_addMode == GeometryType.POINT)
                     {
                         new_geometry = new HPoint();
-                        setEditiMode(Edit_mode.EDIT_GEOMETRY);
+                        setEditMode(Edit_mode.EDIT_GEOMETRY);
 
                     }
                     else if (_addMode == GeometryType.LINE)
                     {
                         new_geometry = new HLineString();
-                        setEditiMode(Edit_mode.ADD_POINT);
+                        setEditMode(Edit_mode.ADD_POINT);
                     }
                     else if (_addMode == GeometryType.POLYGON)
                     {
                         new_geometry = new HPolygon();
-                        setEditiMode(Edit_mode.ADD_POINT);
+                        setEditMode(Edit_mode.ADD_POINT);
                     }
                     var p = vp.unproject(new Point(e.X, e.Y));
                     new_geometry.addPoint(p);
                     symbol.geometry.Add(new_geometry);
+                    selectGeometry(symbol.geometry.Count() - 1, false);
                     updateExplorerList();
-                    geom_explorer.SelectedIndex = symbol.geometry.Count() - 1;
-                    selectGeometry(symbol.geometry.Count() - 1);
                     canvas.Refresh();
                 }
                 else if (_edit_mode == Edit_mode.ADD_POINT) // Append point to selected geometry
@@ -550,6 +624,12 @@ namespace S52_HPGL_Editor
 
                     }
                     break;
+                case Keys.Escape:
+                    if (_edit_mode == Edit_mode.ADD_POINT)
+                    {
+                        setEditMode(Edit_mode.EDIT_GEOMETRY);
+                    }
+                    break;
 
                 default:
                     e.Handled = false;
@@ -575,8 +655,7 @@ namespace S52_HPGL_Editor
 
         private void updateExplorerList()
         {
-
-
+            _fired_by_user = false;
             geom_explorer.Items.Clear();
 
             foreach (var g in symbol.geometry)
@@ -598,85 +677,7 @@ namespace S52_HPGL_Editor
             {
                 geom_explorer.SelectedIndex = selected_geometry_idx;
             }
-
-
-        }
-
-        private void selectGeometry(int idx)
-        {
-
-            _fired_by_user = false;
-            selected_geometry_idx = idx;
-            selected_point_idx = -1;
-
-            // Set things to default
-            foreach (var g in symbol.geometry)
-                g.selected = false;
-
-            color_prop_combo.Enabled = false;
-            width_prop.Enabled = false;
-            transp_prop.Enabled = false;
-            radius_prop.Enabled = false;
-            point_x_val.Enabled = false;
-            point_y_val.Enabled = false;
-            circle_filled_prop.Enabled = false;
-            //
-
-            var s_geom = symbol.geometry[selected_geometry_idx];
-            s_geom.selected = true;
-
-            color_prop_combo.Enabled = true;
-            transp_prop.Enabled = true;
-            color_prop_combo.SelectedIndex = color_prop_combo.FindStringExact(s_geom.color);
-            transp_prop.Value = s_geom.transparency;
-
-            width_prop.Enabled = true;
-            width_prop.Value = symbol.geometry[selected_geometry_idx].penWidth;
-
-            if (s_geom.type == GeometryType.CIRCLE)
-            {
-                var ci = s_geom as HCircle;
-
-                radius_prop.Enabled = true;
-                circle_filled_prop.Enabled = true;
-                radius_prop.Value = ci.radius;
-                circle_filled_prop.Checked = ci.filled;
-                if (!ci.filled)
-                {
-                    width_prop.Enabled = true;
-                    width_prop.Value = symbol.geometry[selected_geometry_idx].penWidth;
-
-                }
-
-            }
-
-            transform_group.Enabled = true;
-
-            if (s_geom.transform != null)
-            {
-                // TODO: need to find out why exceptions periodicly throws there
-                try
-                {
-                    rotate_value.Value = s_geom.transform.rotate_angle;
-                    scale_value.Value = s_geom.transform.scale;
-                    rot_origin_x.Value = s_geom.transform.rotate_origin.X;
-                    rot_origin_y.Value = s_geom.transform.rotate_origin.Y;
-                }
-                catch { }
-
-            }
-            else
-            {
-                rotate_value.Value = 0;
-                scale_value.Value = 100;
-                var c = s_geom.getCenterPoint();
-                rot_origin_x.Value = c.X;
-                rot_origin_y.Value = c.Y;
-            }
             _fired_by_user = true;
-
-            setEditiMode(Edit_mode.EDIT_GEOMETRY);
-            canvas.Refresh();
 
         }
 
@@ -705,7 +706,7 @@ namespace S52_HPGL_Editor
 
         private void geom_explorer_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if(_fired_by_user)
             selectGeometry(geom_explorer.SelectedIndex);
             canvas.Refresh();
         }
@@ -802,7 +803,7 @@ namespace S52_HPGL_Editor
 
                         updateExplorerList();
 
-                        setEditiMode(Edit_mode.EDIT_SYMBOL);
+                        setEditMode(Edit_mode.EDIT_SYMBOL);
 
                         sym_name_textbox.Text = symbol.name;
 
@@ -828,11 +829,11 @@ namespace S52_HPGL_Editor
 
                     if (_edit_mode == Edit_mode.ADD_POINT)
 
-                        setEditiMode(Edit_mode.EDIT_GEOMETRY);
+                        setEditMode(Edit_mode.EDIT_GEOMETRY);
 
                     else
 
-                        setEditiMode(Edit_mode.ADD_POINT);
+                        setEditMode(Edit_mode.ADD_POINT);
 
 
                 }
@@ -842,7 +843,7 @@ namespace S52_HPGL_Editor
         // Set EDIT_SYMBOL mode
         private void editSymbolToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            setEditiMode(Edit_mode.EDIT_SYMBOL);
+            setEditMode(Edit_mode.EDIT_SYMBOL);
             canvas.Refresh();
         }
         // Save 
@@ -893,15 +894,14 @@ namespace S52_HPGL_Editor
 
         private void lineToolStripMenuItem_Click(object sender, EventArgs e) // Add line menu button click handler
         {
-            setEditiMode(Edit_mode.ADD_GEOM);
+            setEditMode(Edit_mode.ADD_GEOM);
             _addMode = GeometryType.LINE;
-
 
         }
 
         private void polygonToolStripMenuItem_Click(object sender, EventArgs e) // Add polygon menu button click handler
         {
-            setEditiMode(Edit_mode.ADD_GEOM);
+            setEditMode(Edit_mode.ADD_GEOM);
             _addMode = GeometryType.POLYGON;
 
 
@@ -909,7 +909,7 @@ namespace S52_HPGL_Editor
 
         private void circleToolStripMenuItem_Click(object sender, EventArgs e) // Add circle menu button click handler
         {
-            setEditiMode(Edit_mode.ADD_GEOM);
+            setEditMode(Edit_mode.ADD_GEOM);
             _addMode = GeometryType.CIRCLE;
 
 
@@ -917,7 +917,7 @@ namespace S52_HPGL_Editor
 
         private void pointToolStripMenuItem_Click(object sender, EventArgs e) // Add point menu button click handler
         {
-            setEditiMode(Edit_mode.ADD_GEOM);
+            setEditMode(Edit_mode.ADD_GEOM);
             _addMode = GeometryType.POINT;
 
 
